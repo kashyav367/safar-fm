@@ -1,0 +1,106 @@
+@import url('https://fonts.googleapis.com/css2?family=Rozha+One&family=Yatra+One&family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+:root {
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #0d0e12;
+  color: #ffffff;
+  overflow-x: hidden;
+  user-select: none;
+}
+
+/* Custom Devanagari Vintage Font */
+.font-devanagari {
+  font-family: 'Yatra One', 'Rozha One', serif;
+}
+
+.font-retro-sub {
+  font-family: 'Rozha One', serif;
+}
+
+/* CRT Scanline FX Overlay */
+.crt-overlay {
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.25) 50%
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+}
+
+/* Vintage Glassmorphism Card (Matching saloon.wtf) */
+.saloon-glass {
+  background: rgba(20, 20, 28, 0.45);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.saloon-glass-pill {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+/* Glowing Pulsing Green Dot */
+.green-dot-pulse {
+  box-shadow: 0 0 10px rgba(74, 222, 128, 0.9);
+}
+
+/* Spinning Record / Cassette Reel Animation */
+@keyframes spinSlow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spinSlow 8s linear infinite;
+}
+
+.animate-spin-paused {
+  animation-play-state: paused;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+/* Floating Emoji Reaction Animation */
+@keyframes floatUp {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(0.8);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-140px) scale(1.3);
+  }
+}
+
+.animate-float-up {
+  animation: floatUp 2.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
