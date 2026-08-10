@@ -44,7 +44,7 @@ Create a `.env.local` file in the project root directory:
 
 ```env
 YOUTUBE_API_KEY=YOUR_YOUTUBE_API_KEY
-YOUTUBE_PLAYLIST_ID=PL2Di--NcQaJNIcXxMYUPtvxdGP2hbn0l1
+YOUTUBE_PLAYLIST_ID=YOUR_YOUTUBE_PLAYLIST_ID
 ```
 
 ### 4. Run Development Server
