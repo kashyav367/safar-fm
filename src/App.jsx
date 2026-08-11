@@ -194,12 +194,23 @@ export default function App() {
       handleNextTrack();
     });
 
+    const unsubDirectError = directAudioEngine.onError(() => {
+      console.warn('[App] DirectAudioEngine error -> falling back to unmuted YouTube player');
+      try {
+        if (youtubePlayer.player && typeof youtubePlayer.player.unMute === 'function') {
+          youtubePlayer.player.unMute();
+          youtubePlayer.player.setVolume(100);
+        }
+      } catch (e) {}
+    });
+
     return () => {
       unsubYtTime();
       unsubYtState();
       unsubYtEnded();
       unsubDirectTime();
       unsubDirectEnded();
+      unsubDirectError();
     };
   }, [currentTrackIndex, tracks.length, duration]);
 
@@ -264,7 +275,7 @@ export default function App() {
     }
   }, [currentTrack, isPlaying]);
 
-  // 4. Play current track via YouTube Player + Silent DOM Background Audio Anchor
+  // 4. Play current track via Direct Audio Engine (Master Background Stream) + YouTube CRT Screen
   const playTrackAtIndex = (index, trackList = tracks) => {
     if (trackList.length === 0) return;
     const targetTrack = trackList[index];
@@ -275,22 +286,29 @@ export default function App() {
     setIsPlaying(true);
     setCurrentTime(0);
 
-    // 1. Start silent DOM audio loop anchor to hold Android Chrome background wake-lock
-    directAudioEngine.startSilentAnchor();
+    // 1. Play HTML5 Direct Audio Engine immediately on User Gesture (guarantees Mobile OS background playback)
+    if (targetTrack.audioUrl) {
+      directAudioEngine.playTrack(targetTrack.audioUrl, 0);
+    }
 
-    // 2. Play YouTube Video with full unmuted audio output
+    // 2. Load YouTube video for CRT visual display, muting YT player if direct audio is playing to prevent double audio
     if (targetTrack.videoId) {
       youtubePlayer.loadVideo(targetTrack.videoId, true);
-    } else if (targetTrack.audioUrl) {
-      directAudioEngine.playTrack(targetTrack.audioUrl, 0);
+      if (targetTrack.audioUrl) {
+        setTimeout(() => {
+          try {
+            if (youtubePlayer.player && typeof youtubePlayer.player.mute === 'function') {
+              youtubePlayer.player.mute();
+            }
+          } catch (e) {}
+        }, 500);
+      }
     }
   };
 
   // 5. Play / Pause Handler
   const handlePlayPause = () => {
     ambientAudio.ensureContext();
-    directAudioEngine.startSilentAnchor();
-
     if (tracks.length === 0) return;
 
     if (isPlaying) {
@@ -300,11 +318,11 @@ export default function App() {
     } else {
       setIsPlaying(true);
       if (currentTrack) {
+        if (currentTrack.audioUrl) {
+          directAudioEngine.playTrack(currentTrack.audioUrl, currentTime);
+        }
         if (currentTrack.videoId) {
           youtubePlayer.play();
-        }
-        if (currentTrack.audioUrl && directAudioEngine.currentUrl === currentTrack.audioUrl) {
-          directAudioEngine.resume();
         }
       }
     }
