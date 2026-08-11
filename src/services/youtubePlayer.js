@@ -195,8 +195,10 @@ class YouTubePlayerEngine {
     this.timeUpdateInterval = setInterval(() => {
       const cur = this.getCurrentTime();
       const dur = this.getDuration();
-      this.onTimeUpdateCallbacks.forEach((cb) => cb(cur, dur));
-    }, 250);
+      if (cur > 0 || dur > 0) {
+        this.onTimeUpdateCallbacks.forEach((cb) => cb(cur, dur));
+      }
+    }, 500);
   }
 
   destroy() {

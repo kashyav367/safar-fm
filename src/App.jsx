@@ -146,10 +146,16 @@ export default function App() {
 
   // 3. Sync Audio Engine Listeners (Direct Audio Master + YouTube CRT Sync) & Auto-Next on ENDED
   useEffect(() => {
+    let lastSecond = -1;
+
     const unsubYtTime = youtubePlayer.onTimeUpdate((cur, dur) => {
       if (!directAudioEngine.isPlaying) {
-        if (cur > 0) setCurrentTime(cur);
-        if (dur > 0) setDuration(dur);
+        const currentSec = Math.floor(cur);
+        if (currentSec !== lastSecond) {
+          lastSecond = currentSec;
+          setCurrentTime(cur);
+        }
+        if (dur > 0 && duration !== dur) setDuration(dur);
       }
     });
 
@@ -174,8 +180,12 @@ export default function App() {
 
     const unsubDirectTime = directAudioEngine.onTimeUpdate((cur, dur) => {
       if (directAudioEngine.isPlaying) {
-        if (cur > 0) setCurrentTime(cur);
-        if (dur > 0) setDuration(dur);
+        const currentSec = Math.floor(cur);
+        if (currentSec !== lastSecond) {
+          lastSecond = currentSec;
+          setCurrentTime(cur);
+        }
+        if (dur > 0 && duration !== dur) setDuration(dur);
       }
     });
 
@@ -191,7 +201,7 @@ export default function App() {
       unsubDirectTime();
       unsubDirectEnded();
     };
-  }, [currentTrackIndex, tracks.length]);
+  }, [currentTrackIndex, tracks.length, duration]);
 
   // 3b. Mobile App Switch & Visibility Change Handler (WhatsApp / Screen Lock Support)
   useEffect(() => {
@@ -200,11 +210,7 @@ export default function App() {
 
       if (document.hidden) {
         console.log('[App] Mobile app switched to background (WhatsApp opened or screen locked)');
-        // Ensure direct audio engine is active so Android Chrome/iOS Safari keep playing audio
-        if (isPlaying && currentTrack && currentTrack.audioUrl && !directAudioEngine.isPlaying) {
-          const curPos = youtubePlayer.getCurrentTime() || currentTime;
-          directAudioEngine.playTrack(currentTrack.audioUrl, curPos);
-        }
+        directAudioEngine.startSilentAnchor();
       } else {
         console.log('[App] Mobile app returned to foreground');
       }
@@ -214,7 +220,7 @@ export default function App() {
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [isPlaying, currentTrack, currentTime]);
+  }, []);
 
   // 3c. Sync HTML5 Media Session API for OS Background Audio Controls (Windows/Mac/Android/iOS)
   useEffect(() => {
@@ -258,7 +264,7 @@ export default function App() {
     }
   }, [currentTrack, isPlaying]);
 
-  // 4. Play current track via Direct Audio Engine (Master Background Stream) + YouTube CRT Screen
+  // 4. Play current track via YouTube Player + Silent DOM Background Audio Anchor
   const playTrackAtIndex = (index, trackList = tracks) => {
     if (trackList.length === 0) return;
     const targetTrack = trackList[index];
@@ -269,27 +275,22 @@ export default function App() {
     setIsPlaying(true);
     setCurrentTime(0);
 
-    // 1. Play Direct Audio Engine immediately on User Gesture (guarantees Mobile OS background playback)
-    if (targetTrack.audioUrl) {
-      directAudioEngine.playTrack(targetTrack.audioUrl, 0);
-    }
+    // 1. Start silent DOM audio loop anchor to hold Android Chrome background wake-lock
+    directAudioEngine.startSilentAnchor();
 
-    // 2. Load YouTube video for CRT visual display, muting YT player to avoid audio echo
+    // 2. Play YouTube Video with full unmuted audio output
     if (targetTrack.videoId) {
       youtubePlayer.loadVideo(targetTrack.videoId, true);
-      setTimeout(() => {
-        try {
-          if (youtubePlayer.player && typeof youtubePlayer.player.mute === 'function') {
-            youtubePlayer.player.mute();
-          }
-        } catch (e) {}
-      }, 600);
+    } else if (targetTrack.audioUrl) {
+      directAudioEngine.playTrack(targetTrack.audioUrl, 0);
     }
   };
 
   // 5. Play / Pause Handler
   const handlePlayPause = () => {
     ambientAudio.ensureContext();
+    directAudioEngine.startSilentAnchor();
+
     if (tracks.length === 0) return;
 
     if (isPlaying) {
@@ -298,15 +299,13 @@ export default function App() {
       setIsPlaying(false);
     } else {
       setIsPlaying(true);
-      if (currentTrack && currentTrack.audioUrl) {
-        if (directAudioEngine.currentUrl === currentTrack.audioUrl) {
-          directAudioEngine.resume();
-        } else {
-          directAudioEngine.playTrack(currentTrack.audioUrl, currentTime);
+      if (currentTrack) {
+        if (currentTrack.videoId) {
+          youtubePlayer.play();
         }
-      }
-      if (currentTrack && currentTrack.videoId) {
-        youtubePlayer.play();
+        if (currentTrack.audioUrl && directAudioEngine.currentUrl === currentTrack.audioUrl) {
+          directAudioEngine.resume();
+        }
       }
     }
   };
