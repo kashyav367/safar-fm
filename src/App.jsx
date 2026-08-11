@@ -13,7 +13,10 @@ import { realtimePassengerService } from './services/realtimePassengerService';
 import { Radio } from 'lucide-react';
 
 export default function App() {
-  // Playlist & Tracks State
+  // Pending target track index when switching playlists
+  const pendingTrackIndexRef = React.useRef(null);
+
+  // Playlist & Tracks State (Defaults to Arijit & Modern Romantic YouTube Playlist)
   const [activePlaylistId, setActivePlaylistId] = useState(YOUTUBE_PLAYLISTS[0].id);
   const [tracks, setTracks] = useState([]);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
@@ -40,91 +43,89 @@ export default function App() {
   // Active track derived from dynamic tracks array or fallback
   const currentTrack = tracks.length > 0 ? tracks[currentTrackIndex] : null;
 
-  // Helper to ensure every track has a valid direct MP3 audioUrl for mobile background playback
+  // Helper to ensure tracks preserve valid direct MP3 audioUrl without assigning dummy MP3 to YouTube tracks
   const enrichTracksWithAudio = (rawTracks) => {
-    const localAudioPool = LOCAL_PLAYLISTS.flatMap((pl) => pl.tracks).map((t) => t.audioUrl).filter(Boolean);
-    return rawTracks.map((t, idx) => ({
+    return rawTracks.map((t) => ({
       ...t,
-      audioUrl: t.audioUrl || localAudioPool[idx % localAudioPool.length] || 'https://ia800300.us.archive.org/1/items/KishoreKumarHits_201804/Zindagi%20Ek%20Safar%20Hai%20Suhana.mp3'
+      audioUrl: t.audioUrl || null
     }));
   };
 
-  // 1. Fetch Dynamic YouTube Playlist when activePlaylistId changes
+  // Helper to format local playlist tracks
+  const formatLocalPlaylistTracks = (localPl) => {
+    return localPl.tracks.map((t) => ({
+      id: `local-${t.id}`,
+      videoId: t.youtubeId || 'Xi6BjmipH58',
+      title: t.title,
+      artist: t.artist,
+      movie: t.movie || 'Highway Special',
+      audioUrl: t.audioUrl,
+      cover: t.cover,
+      duration: t.duration,
+      position: t.id,
+      trivia: t.trivia,
+      source: 'local'
+    }));
+  };
+
+  // Helper to get fallback tracks matching playlist category strictly
+  const getFallbackTracks = (plId) => {
+    if (plId === 'PLjSDelb8LaOfQ8pLA_uIF73qxuznCtCVC' || plId === 'arijit-modern') {
+      const arijitPl = LOCAL_PLAYLISTS.find(p => p.id === 'arijit-modern');
+      if (arijitPl) return formatLocalPlaylistTracks(arijitPl);
+    }
+    if (plId === 'PLluqBUTOXDHUjNguM2wgfaVJhC0OHTTqB' || plId === 'travelling-roadtrip') {
+      const travelPl = LOCAL_PLAYLISTS.find(p => p.id === 'travelling-roadtrip');
+      if (travelPl) return formatLocalPlaylistTracks(travelPl);
+    }
+    if (plId === 'PLMRKdK25AuPVjHl9Kdb-gkBy0Cm7Zi2xo' || plId === '90s-bollywood') {
+      const bollywoodPl = LOCAL_PLAYLISTS.find(p => p.id === '90s-bollywood') || LOCAL_PLAYLISTS[0];
+      if (bollywoodPl) return formatLocalPlaylistTracks(bollywoodPl);
+    }
+    return formatLocalPlaylistTracks(LOCAL_PLAYLISTS[0]);
+  };
+
+  // 1. Fetch or Load Playlist when activePlaylistId changes
   useEffect(() => {
     let isMounted = true;
-    async function fetchPlaylist() {
+
+    async function loadPlaylist() {
       try {
         setLoadingPlaylist(true);
-        setPlaylistError(null);
 
-        // Check if active playlist is a single video jukebox entry
-        const matchedMeta = YOUTUBE_PLAYLISTS.find((p) => p.id === activePlaylistId);
-        if (matchedMeta && matchedMeta.isVideoJukebox) {
-          if (isMounted) {
-            setTracks(enrichTracksWithAudio([
-              {
-                id: `yt-single-${matchedMeta.videoId}`,
-                videoId: matchedMeta.videoId,
-                title: matchedMeta.name,
-                artist: matchedMeta.tagline,
-                cover: `https://img.youtube.com/vi/${matchedMeta.videoId}/hqdefault.jpg`,
-                position: 0,
-                source: 'youtube'
-              }
-            ]));
-            setCurrentTrackIndex(0);
-            setLoadingPlaylist(false);
-          }
-          return;
-        }
-
-        const res = await fetch(`/api/youtube/playlist?playlistId=${encodeURIComponent(activePlaylistId)}`);
-        if (!res.ok) {
-          throw new Error('Unable to load Safar FM playlist. Please try again.');
-        }
-
-        const data = await res.json();
+        // Pre-populate category tracks INSTANTLY for 0ms tab switching & instant audio response
+        const instantTracks = enrichTracksWithAudio(getFallbackTracks(activePlaylistId));
         if (isMounted) {
-          if (data.tracks && Array.isArray(data.tracks) && data.tracks.length > 0) {
-            setTracks(enrichTracksWithAudio(data.tracks));
-            setCurrentTrackIndex(0);
-          } else {
-            // Fallback to local playlist tracks if empty
-            const fallbackTracks = LOCAL_PLAYLISTS[0].tracks.map((t) => ({
-              id: `local-${t.id}`,
-              videoId: t.youtubeId || 'N0jnLZxYwYc',
-              title: `${t.title} - ${t.artist}`,
-              artist: t.artist,
-              audioUrl: t.audioUrl,
-              cover: t.cover,
-              position: t.id
-            }));
-            setTracks(enrichTracksWithAudio(fallbackTracks));
-            setCurrentTrackIndex(0);
-          }
+          setTracks(instantTracks);
+          const targetIndex = (pendingTrackIndexRef.current !== null && pendingTrackIndexRef.current < instantTracks.length)
+            ? pendingTrackIndexRef.current
+            : 0;
+          setCurrentTrackIndex(targetIndex);
           setLoadingPlaylist(false);
+
+          // Play only if user clicked a song/playlist or music was already playing!
+          if (isPlaying || pendingTrackIndexRef.current !== null) {
+            playTrackAtIndex(targetIndex, instantTracks);
+          }
+        }
+
+        // Fetch full 30-50+ YouTube Playlist tracks in background smoothly
+        const res = await fetch(`/api/youtube/playlist?playlistId=${encodeURIComponent(activePlaylistId)}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (isMounted && data.tracks && Array.isArray(data.tracks) && data.tracks.length > 0) {
+            const enriched = enrichTracksWithAudio(data.tracks);
+            setTracks(enriched);
+          }
         }
       } catch (err) {
-        console.error('[App] Playlist Fetch Error:', err.message);
-        if (isMounted) {
-          // Fallback to local playlist tracks on error
-          const fallbackTracks = LOCAL_PLAYLISTS[0].tracks.map((t) => ({
-            id: `local-${t.id}`,
-            videoId: t.youtubeId || 'N0jnLZxYwYc',
-            title: `${t.title} - ${t.artist}`,
-            artist: t.artist,
-            audioUrl: t.audioUrl,
-            cover: t.cover,
-            position: t.id
-          }));
-          setTracks(enrichTracksWithAudio(fallbackTracks));
-          setCurrentTrackIndex(0);
-          setLoadingPlaylist(false);
-        }
+        console.error('[App] Background YouTube Playlist Fetch Error:', err.message);
+      } finally {
+        pendingTrackIndexRef.current = null;
       }
     }
 
-    fetchPlaylist();
+    loadPlaylist();
     return () => {
       isMounted = false;
     };
@@ -298,13 +299,12 @@ export default function App() {
     ambientAudio.ensureContext();
     directAudioEngine.startSilentAnchor();
 
-    // Play track via YouTube Player with Direct Audio fallback
+    // Play track via YouTube Player when videoId is present
     if (targetTrack.videoId) {
-      const loaded = youtubePlayer.loadVideo(targetTrack.videoId, true);
-      if (!loaded && targetTrack.audioUrl) {
-        directAudioEngine.playTrack(targetTrack.audioUrl, 0);
-      }
+      directAudioEngine.pause();
+      youtubePlayer.loadVideo(targetTrack.videoId, true);
     } else if (targetTrack.audioUrl) {
+      youtubePlayer.pause();
       directAudioEngine.playTrack(targetTrack.audioUrl, 0);
     }
   };
@@ -323,15 +323,16 @@ export default function App() {
     } else {
       setIsPlaying(true);
       if (currentTrack) {
-        if (directAudioEngine.currentUrl && directAudioEngine.audio && directAudioEngine.audio.paused) {
-          directAudioEngine.resume();
-        } else if (currentTrack.videoId) {
+        if (currentTrack.videoId) {
+          directAudioEngine.pause();
           youtubePlayer.play();
-          if (!youtubePlayer.isReady && currentTrack.audioUrl) {
+        } else if (currentTrack.audioUrl) {
+          youtubePlayer.pause();
+          if (directAudioEngine.currentUrl && directAudioEngine.audio && directAudioEngine.audio.paused) {
+            directAudioEngine.resume();
+          } else {
             directAudioEngine.playTrack(currentTrack.audioUrl, currentTime);
           }
-        } else if (currentTrack.audioUrl) {
-          directAudioEngine.playTrack(currentTrack.audioUrl, currentTime);
         }
       }
     }
@@ -389,11 +390,13 @@ export default function App() {
   const handleSelectTrack = (playlistId, index) => {
     ambientAudio.playRadioStatic(0.4);
     if (playlistId !== activePlaylistId) {
+      pendingTrackIndexRef.current = index;
       setActivePlaylistId(playlistId);
-    }
-    if (index >= 0 && index < tracks.length) {
-      setCurrentTrackIndex(index);
-      playTrackAtIndex(index);
+    } else {
+      if (index >= 0 && index < tracks.length) {
+        setCurrentTrackIndex(index);
+        playTrackAtIndex(index);
+      }
     }
   };
 
@@ -416,7 +419,7 @@ export default function App() {
               Finding your window seat...
             </h2>
             <p className="text-xs text-amber-200/80 mt-1 font-mono">
-              Loading Safar FM YouTube Highway Radio • 92.7 MHz
+              Loading Safar FM Highway Radio • 92.7 MHz
             </p>
           </div>
         </div>
@@ -424,11 +427,28 @@ export default function App() {
     );
   }
 
-  // Adapted Playlist objects for SaloonPlayer compatibility
-  const activePlaylistMeta = YOUTUBE_PLAYLISTS.find(p => p.id === activePlaylistId) || YOUTUBE_PLAYLISTS[0];
-  
+  // Dedicated UI array mapped strictly to the 3 requested YouTube Playlists
   const dynamicPlaylistForUI = YOUTUBE_PLAYLISTS.map((pl) => {
     const isCurrentPl = pl.id === activePlaylistId;
+    const fallbackList = getFallbackTracks(pl.id);
+    const displayTracks = isCurrentPl && tracks.length > 0
+      ? tracks.map((t) => ({
+          id: t.id,
+          title: t.title,
+          artist: t.artist && t.artist !== 'undefined' ? t.artist : 'Safar FM',
+          movie: pl.hindiName || 'Safar Highway Special',
+          duration: duration > 0 && currentTrack?.id === t.id ? `${Math.floor(duration / 60)}:${Math.floor(duration % 60).toString().padStart(2, '0')}` : 'Radio Track',
+          cover: t.cover
+        }))
+      : fallbackList.map((t) => ({
+          id: t.id,
+          title: t.title,
+          artist: t.artist && t.artist !== 'undefined' ? t.artist : 'Safar FM',
+          movie: pl.hindiName || 'Safar Highway Special',
+          duration: t.duration || 'Radio Track',
+          cover: t.cover
+        }));
+
     return {
       id: pl.id,
       name: pl.name,
@@ -436,16 +456,7 @@ export default function App() {
       tagline: pl.tagline,
       category: pl.category,
       badge: pl.badge,
-      tracks: isCurrentPl 
-        ? tracks.map((t) => ({
-            id: t.id,
-            title: t.title,
-            artist: t.artist && t.artist !== 'undefined' ? t.artist : 'Safar FM',
-            movie: pl.hindiName || 'Safar Highway Special',
-            duration: duration > 0 && currentTrack?.id === t.id ? `${Math.floor(duration / 60)}:${Math.floor(duration % 60).toString().padStart(2, '0')}` : 'Radio Track',
-            cover: t.cover
-          }))
-        : []
+      tracks: displayTracks
     };
   });
 

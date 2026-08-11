@@ -1,296 +1,262 @@
-// Complete Nostalgic Indian Highway Bus Radio Tracks Collection
+// Complete Safar FM Playlist Collection
+// Strictly containing the 3 user-specified YouTube playlists:
+// 1. 90s & Old Bollywood Highway Hits (PLMRKdK25AuPVjHl9Kdb-gkBy0Cm7Zi2xo)
+// 2. Nostalgic Roadtrip & Travelling Songs (PLluqBUTOXDHUjNguM2wgfaVJhC0OHTTqB)
+// 3. Arijit Singh & Modern Romantic (PLjSDelb8LaOfQ8pLA_uIF73qxuznCtCVC)
+
 export const PLAYLISTS = [
   {
-    id: "70s-highway",
-    name: "डीलक्स सफ़र - Golden 70s & 80s",
-    tagline: "Kishore Kumar, RD Burman & Highway Classics",
+    id: "90s-bollywood",
+    name: "📻 90s & Old Bollywood Highway Hits",
+    tagline: "Kumar Sanu, Udit Narayan, Alka Yagnik & 90s Golden Highway Classics",
+    badge: "90s BOLLYWOOD",
     tracks: [
       {
         id: 1,
-        title: "Zindagi Ek Safar Hai Suhana",
-        artist: "Kishore Kumar",
-        movie: "Andaz (1971)",
-        year: 1971,
-        duration: "4:22",
-        spotifyUri: "spotify:track:688xY164L0R8J46mQp84tJ",
-        youtubeId: "N0jnLZxYwYc",
-        audioUrl: "https://archive.org/download/KishoreKumarHits_201804/Zindagi%20Ek%20Safar%20Hai%20Suhana.mp3",
+        title: "Ram Jaane Title Track",
+        artist: "Udit Narayan, Sonu Nigam, Alka Yagnik",
+        movie: "Ram Jaane (1995)",
+        year: 1995,
+        duration: "5:03",
+        youtubeId: "Xi6BjmipH58",
         cover: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=400&q=80",
-        trivia: "Kishore Da improvised the iconic yodeling while traveling on a Mumbai local bus!"
+        trivia: "Shah Rukh Khan highway title classic from 1995."
       },
       {
         id: 2,
-        title: "Musafir Hoon Yaaron",
-        artist: "Kishore Kumar",
-        movie: "Parichay (1972)",
-        year: 1972,
-        duration: "3:10",
-        spotifyUri: "spotify:track:3uP3h98c919d7788123456",
-        youtubeId: "g-9_g7p19mE",
-        audioUrl: "https://archive.org/download/KishoreKumarHits_201804/Musafir%20Hoon%20Yaaron.mp3",
+        title: "Chhote Chhote Bhaiyon Ke Bade Bhaiyya",
+        artist: "Kavita Krishnamurthy, Udit Narayan, Kumar Sanu",
+        movie: "Hum Saath Saath Hain (1999)",
+        year: 1999,
+        duration: "7:15",
+        youtubeId: "caEfgyFv4SM",
         cover: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=400&q=80",
-        trivia: "Gulzar wrote this lyrics sitting inside a state transport bus watching the sunset."
+        trivia: "The ultimate 90s Bollywood wedding & roadtrip family anthem."
       },
       {
         id: 3,
-        title: "Safar Mein Dhoop To Hogi",
-        artist: "Jagjit Singh",
-        movie: "Ghazals For Roadtrips",
-        year: 1985,
-        duration: "5:14",
-        spotifyUri: "spotify:track:5g7Yw8100x883838123456",
-        youtubeId: "4YxNq4zO0M8",
-        audioUrl: "https://archive.org/download/JagjitSinghGhazals/Safar%20Mein%20Dhoop.mp3",
+        title: "Dil Ki Tanhai Ko",
+        artist: "Kumar Sanu",
+        movie: "Chaahat (1996)",
+        year: 1996,
+        duration: "5:00",
+        youtubeId: "8mweiZlvxsE",
         cover: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=400&q=80",
-        trivia: "The timeless ghazal loved by every highway night traveler."
+        trivia: "Kumar Sanu's soulful 90s highway classic."
       },
       {
         id: 4,
-        title: "Yeh Shaam Mastani",
-        artist: "Kishore Kumar",
-        movie: "Kati Patang (1971)",
-        year: 1971,
-        duration: "4:35",
-        spotifyUri: "spotify:track:27uJ8090x9923838123456",
-        youtubeId: "_J59qH7mXk0",
-        audioUrl: "https://archive.org/download/KishoreKumarHits_201804/Yeh%20Shaam%20Mastani.mp3",
+        title: "Maine Payal Hai Chhankai",
+        artist: "Falguni Pathak",
+        movie: "90s Indipop Highway Classic",
+        year: 1999,
+        duration: "4:00",
+        youtubeId: "0tjVtYtZ384",
         cover: "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=400&q=80",
-        trivia: "RD Burman created the gentle rhythm mimicking bus tire hums on asphalt."
+        trivia: "Falguni Pathak's iconic 90s pop melody."
       },
       {
         id: 5,
-        title: "O Mere Dil Ke Chain",
-        artist: "Kishore Kumar",
-        movie: "Mere Jeevan Kothi (1972)",
-        year: 1972,
-        duration: "4:30",
-        spotifyUri: "spotify:track:17uJ8090x9923838123456",
-        youtubeId: "a3-1k8K588k",
-        audioUrl: "https://archive.org/download/KishoreKumarHits_201804/O%20Mere%20Dil%20Ke%20Chain.mp3",
+        title: "Tu Pyar Hai Kisi Aur Ka",
+        artist: "Anuradha Paudwal, Kumar Sanu",
+        movie: "Dil Hai Ke Manta Nahin (1991)",
+        year: 1991,
+        duration: "4:50",
+        youtubeId: "U0qBRoeQa-g",
         cover: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=400&q=80",
-        trivia: "Top requested song on All India Radio Vividh Bharati."
+        trivia: "Aamir Khan & Pooja Bhatt highway bus journey duet."
       },
       {
         id: 6,
-        title: "Pal Pal Dil Ke Paas",
-        artist: "Kishore Kumar",
-        movie: "Blackmail (1973)",
-        year: 1973,
-        duration: "5:25",
-        spotifyUri: "spotify:track:5187092688054e9042af9f",
-        youtubeId: "L0vQ5wJz_S0",
-        audioUrl: "https://archive.org/download/KishoreKumarHits_201804/Pal%20Pal%20Dil%20Ke%20Paas.mp3",
+        title: "Oh Oh Jane Jaana",
+        artist: "Kamal Khan",
+        movie: "Pyaar Kiya Toh Darna Kya (1998)",
+        year: 1998,
+        duration: "4:10",
+        youtubeId: "x_elT6zkqN0",
         cover: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80",
-        trivia: "Written as a romantic letter sent by mail during a journey."
+        trivia: "Salman Khan 90s guitar roadtrip anthem."
       },
       {
         id: 7,
-        title: "Mere Sapno Ki Rani",
-        artist: "Kishore Kumar",
-        movie: "Aradhana (1969)",
-        year: 1969,
+        title: "Chudi Jo Khanki Haathon Mein",
+        artist: "Falguni Pathak",
+        movie: "90s Indipop Highway Classic",
+        year: 2000,
         duration: "4:15",
-        spotifyUri: "spotify:track:493225457124a3eb161ffa",
-        youtubeId: "vo1MykK4u8U",
-        audioUrl: "https://archive.org/download/KishoreKumarHits_201804/Mere%20Sapno%20Ki%20Rani.mp3",
+        youtubeId: "Xna3I11v9Vs",
         cover: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=400&q=80",
-        trivia: "Shot with Rajesh Khanna in a jeep alongside a toy train."
+        trivia: "Golden 90s Indipop journey hit."
       },
       {
         id: 8,
-        title: "Ek Ajnabee Haseena Se",
-        artist: "Kishore Kumar",
-        movie: "Ajanabee (1974)",
-        year: 1974,
-        duration: "4:20",
-        spotifyUri: "spotify:track:519692933481e162a57d67",
-        youtubeId: "5tT2v2k_p2k",
-        audioUrl: "https://archive.org/download/KishoreKumarHits_201804/Ek%20Ajnabee%20Haseena%20Se.mp3",
+        title: "Sona Kitna Sona Hai",
+        artist: "Udit Narayan, Poornima",
+        movie: "Hero No.1 (1997)",
+        year: 1997,
+        duration: "4:40",
+        youtubeId: "PlN6oP-Nlno",
         cover: "https://images.unsplash.com/photo-1519692933481-e162a57d6721?auto=format&fit=crop&w=400&q=80",
-        trivia: "Classic train & highway journey romance song."
-      },
+        trivia: "Govinda & Karisma 90s superhit."
+      }
+    ]
+  },
+  {
+    id: "travelling-roadtrip",
+    name: "🚌 सफ़र स्पेशल - Roadtrip & Travelling Songs",
+    tagline: "Aao Milo Chalen, Safarnama, Dil Chahta Hai & Travelling Anthems",
+    badge: "ROADTRIP SPECIAL",
+    tracks: [
       {
         id: 9,
-        title: "Pyar Deewana Hota Hai",
-        artist: "Kishore Kumar",
-        movie: "Kati Patang (1971)",
-        year: 1971,
-        duration: "4:40",
-        spotifyUri: "spotify:track:441974231531c6227db76b",
-        youtubeId: "a2v84k1290a",
-        audioUrl: "https://archive.org/download/KishoreKumarHits_201804/Pyar%20Deewana%20Hota%20Hai.mp3",
-        cover: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=400&q=80",
-        trivia: "Eternal classic sung by Kishore Da."
+        title: "Aao Milo Chalen",
+        artist: "Shaan, Ustad Sultan Khan",
+        movie: "Jab We Met (2007)",
+        year: 2007,
+        duration: "5:28",
+        youtubeId: "Mo5tQDcs__g",
+        cover: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=400&q=80",
+        trivia: "The quintessential Indian roadtrip & highway travel song."
       },
       {
         id: 10,
-        title: "Khaike Paan Banaraswala",
-        artist: "Kishore Kumar",
-        movie: "Don (1978)",
-        year: 1978,
+        title: "Chota Sa Fasana",
+        artist: "Arijit Singh",
+        movie: "Karwaan (2018)",
+        year: 2018,
         duration: "3:58",
-        spotifyUri: "spotify:track:507525428034b723cf961d",
-        youtubeId: "a84k1290a2v",
-        audioUrl: "https://archive.org/download/KishoreKumarHits_201804/Khaike%20Paan%20Banaraswala.mp3",
-        cover: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=400&q=80",
-        trivia: "Iconic energetic track played on every North Indian highway dhabas."
-      }
-    ]
-  },
-  {
-    id: "90s-indipop",
-    name: "90s Highway Indipop Express",
-    tagline: "Silk Route, Euphoria & 90s School Trip Vibe",
-    tracks: [
+        youtubeId: "MjjQYPTOqNs",
+        cover: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=400&q=80",
+        trivia: "Irrfan Khan roadtrip journey melody."
+      },
       {
         id: 11,
-        title: "Dooba Dooba Rehte Hoon",
-        artist: "Silk Route (Mohit Chauhan)",
-        movie: "Boondein (1998)",
-        year: 1998,
-        duration: "4:05",
-        spotifyUri: "spotify:track:1y4P125tJ8000000000000",
-        youtubeId: "1y_4P125tJ8",
-        audioUrl: "https://archive.org/download/90sIndipop/Dooba%20Dooba.mp3",
-        cover: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80",
-        trivia: "The anthem of 90s school bus picnics and mountain journeys."
+        title: "Yun Hi Chala Chal",
+        artist: "Udit Narayan, Kailash Kher",
+        movie: "Swades (2004)",
+        year: 2004,
+        duration: "7:28",
+        youtubeId: "eEeX2QMlSlo",
+        cover: "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=400&q=80",
+        trivia: "A.R. Rahman's iconic highway truck travel song."
       },
       {
         id: 12,
-        title: "O Sanam",
+        title: "SAFARNAMA",
         artist: "Lucky Ali",
-        movie: "Sunoh (1996)",
-        year: 1996,
-        duration: "3:48",
-        spotifyUri: "spotify:track:4j89Y164L0R8J46mQp84tJ",
-        youtubeId: "s_1u-3h70kY",
-        audioUrl: "https://archive.org/download/LuckyAliHits/O%20Sanam.mp3",
-        cover: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=400&q=80",
-        trivia: "Lucky Ali's acoustic guitar rhythm mimics the swaying motion of a bus."
+        movie: "Tamasha (2015)",
+        year: 2015,
+        duration: "4:11",
+        youtubeId: "OQ-DiP-Cuj4",
+        cover: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=400&q=80",
+        trivia: "Lucky Ali's timeless voice calling travellers."
       },
       {
         id: 13,
-        title: "Maeri",
-        artist: "Euphoria",
-        movie: "Phir Dhoom (2000)",
-        year: 2000,
-        duration: "4:50",
-        spotifyUri: "spotify:track:0n9W3q8Q7oM00000000000",
-        youtubeId: "0n9W3q8Q7oM",
-        audioUrl: "https://archive.org/download/EuphoriaHits/Maeri.mp3",
-        cover: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=400&q=80",
-        trivia: "Played on every college bus tour across Northern India."
+        title: "Main Zindagi Ka Saath Nibhaata",
+        artist: "Mohd Rafi",
+        movie: "Hum Dono (1961)",
+        year: 1961,
+        duration: "3:50",
+        youtubeId: "ZwDvIZA-H9A",
+        cover: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=400&q=80",
+        trivia: "Dev Anand's carefree road anthem."
       },
       {
         id: 14,
-        title: "Tanha Dil",
-        artist: "Shaan",
-        movie: "Tanha Dil (2000)",
-        year: 2000,
-        duration: "4:42",
-        spotifyUri: "spotify:track:469854523086cc02fe5d88",
-        youtubeId: "i2v2443_x8w",
-        audioUrl: "https://archive.org/download/ShaanHits/Tanha%20Dil.mp3",
-        cover: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=400&q=80",
-        trivia: "The ultimate 2000s highway solo traveler anthem."
+        title: "Kabira",
+        artist: "Tochi Raina, Rekha Bhardwaj",
+        movie: "Yeh Jawaani Hai Deewani (2013)",
+        year: 2013,
+        duration: "3:44",
+        youtubeId: "jHNNMj5bNQw",
+        cover: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=400&q=80",
+        trivia: "Window-seat travelling ballad."
       },
       {
         id: 15,
-        title: "Pehla Nasha",
-        artist: "Udit Narayan, Sadhana Sargam",
-        movie: "Jo Jeeta Wohi Sikandar (1992)",
-        year: 1992,
-        duration: "4:52",
-        spotifyUri: "spotify:track:507525428034b723cf961e",
-        youtubeId: "p-0k8483_S8",
-        audioUrl: "https://archive.org/download/90sBollywoodHits/Pehla%20Nasha.mp3",
-        cover: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=400&q=80",
-        trivia: "First Bollywood song shot entirely in slow motion."
-      },
-      {
-        id: 16,
-        title: "Tujhe Dekha To",
-        artist: "Kumar Sanu, Lata Mangeshkar",
+        title: "Ho Gaya Hai Tujhko",
+        artist: "Lata Mangeshkar, Udit Narayan",
         movie: "Dilwale Dulhania Le Jayenge (1995)",
         year: 1995,
-        duration: "5:02",
-        spotifyUri: "spotify:track:511671782779c97d3d27a1",
-        youtubeId: "c2V-qA228wE",
-        audioUrl: "https://archive.org/download/90sBollywoodHits/Tujhe%20Dekha%20To.mp3",
-        cover: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=400&q=80",
-        trivia: "The defining romantic anthem of 90s Indian cinema."
+        duration: "5:48",
+        youtubeId: "hw_HpTI_Wkw",
+        cover: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80",
+        trivia: "Train & highway journey romance classic."
       }
     ]
   },
   {
-    id: "rainy-dhaba",
-    name: "बारिश और ढाबा - Night Ghazals",
-    tagline: "Late Night Dhaba Chai & Soft Roadside Ghazals",
+    id: "arijit-modern",
+    name: "🎙️ अरिजीत सिंह व मॉडर्न Romantic",
+    tagline: "Dhul Gaye, Tum Kya Mile, Phir Aur Kya Chahiye & Arijit Melodies",
+    badge: "ARIJIT SPECIAL",
     tracks: [
       {
+        id: 16,
+        title: "Dhul Gaye",
+        artist: "Arijit Singh",
+        movie: "Oriyon Music (2024)",
+        year: 2024,
+        duration: "4:00",
+        youtubeId: "Wy8ZbIx4HYc",
+        cover: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=400&q=80",
+        trivia: "Arijit Singh's latest soulful romantic single."
+      },
+      {
         id: 17,
-        title: "Rimjhim Gire Sawan",
-        artist: "Kishore Kumar",
-        movie: "Manzil (1979)",
-        year: 1979,
-        duration: "3:30",
-        spotifyUri: "spotify:track:519692933481e162a57d68",
-        youtubeId: "gH6nZ3w-K9E",
-        audioUrl: "https://archive.org/download/KishoreKumarHits_201804/Rimjhim%20Gire%20Sawan.mp3",
-        cover: "https://images.unsplash.com/photo-1519692933481-e162a57d6721?auto=format&fit=crop&w=400&q=80",
-        trivia: "Perfect song when rain trickles down the bus window frame."
+        title: "Angels For Each Other",
+        artist: "Martin Garrix & Arijit Singh",
+        movie: "Single (2024)",
+        year: 2024,
+        duration: "3:45",
+        youtubeId: "OTMQJ656r-M",
+        cover: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=400&q=80",
+        trivia: "International collaboration by Arijit Singh."
       },
       {
         id: 18,
-        title: "Chhod Aye Hum Wo Galiyan",
-        artist: "Hariharan, Suresh Wadkar",
-        movie: "Maachis (1996)",
-        year: 1996,
-        duration: "5:12",
-        spotifyUri: "spotify:track:441974231531c6227db76c",
-        youtubeId: "k-0a2A-e2k0",
-        audioUrl: "https://archive.org/download/90sBollywoodHits/Chhod%20Aye%20Hum.mp3",
-        cover: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=400&q=80",
-        trivia: "Gulzar & Vishal Bhardwaj's masterpiece for long night journeys."
+        title: "Chhodunga Na",
+        artist: "Arijit Singh",
+        movie: "Oriyon Music (2024)",
+        year: 2024,
+        duration: "4:15",
+        youtubeId: "gh9FoxuYx8k",
+        cover: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=400&q=80",
+        trivia: "Soulful Arijit Singh romantic melody."
       },
       {
         id: 19,
-        title: "Hoshwalon Ko Khabar Kya",
-        artist: "Jagjit Singh",
-        movie: "Sarfarosh (1999)",
-        year: 1999,
-        duration: "5:03",
-        spotifyUri: "spotify:track:507525428034b723cf961f",
-        youtubeId: "3v83_S892wE",
-        audioUrl: "https://archive.org/download/JagjitSinghGhazals/Hoshwalon%20Ko%20Khabar%20Kya.mp3",
-        cover: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=400&q=80",
-        trivia: "Jagjit Singh's iconic ghazal for midnight roadside tea stalls."
+        title: "Dil Haareya",
+        artist: "Arijit Singh",
+        movie: "Dharma 2.0 (2024)",
+        year: 2024,
+        duration: "4:10",
+        youtubeId: "GsFLMQ1u9QQ",
+        cover: "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=400&q=80",
+        trivia: "Heartfelt romantic track by Arijit Singh."
       },
       {
         id: 20,
-        title: "Tum Ko Dekha To Yeh Khayal Aaya",
-        artist: "Jagjit Singh, Chitra Singh",
-        movie: "Saath Saath (1982)",
-        year: 1982,
-        duration: "4:50",
-        spotifyUri: "spotify:track:534447677768be436bb094",
-        youtubeId: "2v40028w_0M",
-        audioUrl: "https://archive.org/download/JagjitSinghGhazals/Tumko%20Dekha%20To.mp3",
-        cover: "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=400&q=80",
-        trivia: "Essential midnight ghazal played on night bus journeys."
+        title: "Tum Kya Mile",
+        artist: "Arijit Singh, Shreya Ghoshal",
+        movie: "Rocky Aur Rani Kii Prem Kahaani (2023)",
+        year: 2023,
+        duration: "4:37",
+        youtubeId: "taRBVfDRukY",
+        cover: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=400&q=80",
+        trivia: "Pritam & Arijit Singh snowy mountain romance anthem."
       },
       {
         id: 21,
-        title: "Lag Ja Gale",
-        artist: "Lata Mangeshkar",
-        movie: "Woh Kaun Thi? (1964)",
-        year: 1964,
-        duration: "4:18",
-        spotifyUri: "spotify:track:5187092688054e9042af9g",
-        youtubeId: "TFr6G5zveS8",
-        audioUrl: "https://archive.org/download/LataMangeshkarHits/Lag%20Ja%20Gale.mp3",
+        title: "Phir Aur Kya Chahiye",
+        artist: "Arijit Singh, Sachin-Jigar",
+        movie: "Zara Hatke Zara Bachke (2023)",
+        year: 2023,
+        duration: "4:26",
+        youtubeId: "8sLS2knUa6Y",
         cover: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80",
-        trivia: "Ranked among the top 5 greatest Indian songs of all time."
+        trivia: "Chartbuster romantic song by Arijit Singh."
       }
     ]
   }
@@ -298,20 +264,12 @@ export const PLAYLISTS = [
 
 export const YOUTUBE_PLAYLISTS = [
   {
-    id: "PL2Di--NcQaJNIcXxMYUPtvxdGP2hbn0l1",
-    name: "📻 70s & 80s Golden Classics",
-    hindiName: "गोल्डन क्लासिक्स (Kishore & RD Burman)",
-    tagline: "Kishore Kumar, RD Burman, Mohammed Rafi & 70s Evergreen Road Songs",
-    category: "Golden Oldies",
-    badge: "70s/80s CLASSICS"
-  },
-  {
-    id: "PLjSDelb8LaOfQ8pLA_uIF73qxuznCtCVC",
-    name: "🎙️ Arijit Singh & Modern Romantic",
-    hindiName: "अरिजीत सिंह व आधुनिक नग्मे",
-    tagline: "Arijit Singh, Mohit Chauhan, Atif Aslam & Soulful Highway Melodies",
-    category: "Arijit & Modern",
-    badge: "ARIJIT SPECIAL"
+    id: "PLMRKdK25AuPVjHl9Kdb-gkBy0Cm7Zi2xo",
+    name: "📻 90s & Old Bollywood Highway Hits",
+    hindiName: "90s व ओल्ड बॉलीवुड क्लासिक्स",
+    tagline: "Kumar Sanu, Udit Narayan, Alka Yagnik & 90s Golden Roadtrip Classics",
+    category: "90s & Old Bollywood",
+    badge: "90s BOLLYWOOD"
   },
   {
     id: "PLluqBUTOXDHUjNguM2wgfaVJhC0OHTTqB",
@@ -320,11 +278,20 @@ export const YOUTUBE_PLAYLISTS = [
     tagline: "Ultimate Highway Roadtrip & Bus Journey Nostalgia Collection",
     category: "Travelling Hits",
     badge: "ROADTRIP SPECIAL"
+  },
+  {
+    id: "PLjSDelb8LaOfQ8pLA_uIF73qxuznCtCVC",
+    name: "🎙️ Arijit Singh & Modern Romantic",
+    hindiName: "अरिजीत सिंह व आधुनिक नग्मे",
+    tagline: "Arijit Singh, Mohit Chauhan, Atif Aslam & Soulful Highway Melodies",
+    category: "Arijit & Modern",
+    badge: "ARIJIT SPECIAL"
   }
 ];
 
 export const SPOTIFY_PLAYLIST_URL = "https://open.spotify.com/playlist/2AVjI8Z57bqMJVtU3V9X1Q";
-export const YOUTUBE_PLAYLIST_URL = "https://music.youtube.com/playlist?list=PLjSDelb8LaOfQ8pLA_uIF73qxuznCtCVC";
+// Update default YouTube playlist link to point to 90s & Old Bollywood Hits (Playlist #1)
+export const YOUTUBE_PLAYLIST_URL = "https://music.youtube.com/playlist?list=PLMRKdK25AuPVjHl9Kdb-gkBy0Cm7Zi2xo";
 
 export function getTrackSpotifyUrl(track) {
   if (track && track.spotifyUrl) return track.spotifyUrl;
@@ -340,3 +307,5 @@ export function getTrackYouTubeMusicUrl(track) {
   const query = `${track.title} ${track.artist}`.trim();
   return `https://music.youtube.com/search?q=${encodeURIComponent(query)}`;
 }
+
+export const LOCAL_PLAYLISTS = PLAYLISTS;

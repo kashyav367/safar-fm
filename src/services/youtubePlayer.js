@@ -61,9 +61,9 @@ class YouTubePlayerEngine {
       this.player = new window.YT.Player('youtube-player-container', {
         width: '100%',
         height: '100%',
-        videoId: this.currentVideoId || 'N0jnLZxYwYc',
+        videoId: this.currentVideoId || 'Xi6BjmipH58',
         playerVars: {
-          autoplay: 1,
+          autoplay: 0,
           controls: 1,
           disablekb: 0,
           enablejsapi: 1,
@@ -81,6 +81,9 @@ class YouTubePlayerEngine {
             try {
               if (typeof this.player.unMute === 'function') this.player.unMute();
               if (typeof this.player.setVolume === 'function') this.player.setVolume(100);
+              if (!this.currentVideoId && typeof this.player.pauseVideo === 'function') {
+                this.player.pauseVideo();
+              }
             } catch (e) {}
             this.startTimeTracking();
           },

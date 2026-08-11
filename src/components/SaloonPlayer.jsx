@@ -164,7 +164,7 @@ function SaloonPlayer({
           <div className="min-w-0 flex-1">
             <div className="flex items-center justify-between">
               <p className="truncate text-xs sm:text-sm font-bold text-white drop-shadow-sm">
-                {currentTrack ? currentTrack.title : 'Zindagi Ek Safar Hai Suhana'}
+                {currentTrack ? currentTrack.title : 'Ram Jaane Title Track'}
               </p>
               
               {/* Radio Dial Channel Tag */}
@@ -180,7 +180,7 @@ function SaloonPlayer({
             <p className="truncate text-[11px] sm:text-xs text-white/70">
               {currentTrack 
                 ? `${currentTrack.artist && currentTrack.artist !== 'undefined' ? currentTrack.artist : 'Safar FM'} • ${currentTrack.movie && currentTrack.movie !== 'undefined' ? currentTrack.movie : 'Highway Special'}` 
-                : 'Kishore Kumar • Andaz (1971)'}
+                : 'Udit Narayan, Sonu Nigam, Alka Yagnik • Ram Jaane'}
             </p>
 
             {/* Custom Interactive Seek Bar */}
