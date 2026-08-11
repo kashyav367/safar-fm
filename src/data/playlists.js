@@ -14,7 +14,7 @@ export const PLAYLISTS = [
         duration: "4:22",
         spotifyUri: "spotify:track:688xY164L0R8J46mQp84tJ",
         youtubeId: "N0jnLZxYwYc",
-        audioUrl: "https://ia800300.us.archive.org/1/items/KishoreKumarHits_201804/Zindagi%20Ek%20Safar%20Hai%20Suhana.mp3",
+        audioUrl: "https://archive.org/download/KishoreKumarHits_201804/Zindagi%20Ek%20Safar%20Hai%20Suhana.mp3",
         cover: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=400&q=80",
         trivia: "Kishore Da improvised the iconic yodeling while traveling on a Mumbai local bus!"
       },
@@ -27,7 +27,7 @@ export const PLAYLISTS = [
         duration: "3:10",
         spotifyUri: "spotify:track:3uP3h98c919d7788123456",
         youtubeId: "g-9_g7p19mE",
-        audioUrl: "https://ia800300.us.archive.org/1/items/KishoreKumarHits_201804/Musafir%20Hoon%20Yaaron.mp3",
+        audioUrl: "https://archive.org/download/KishoreKumarHits_201804/Musafir%20Hoon%20Yaaron.mp3",
         cover: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=400&q=80",
         trivia: "Gulzar wrote this lyrics sitting inside a state transport bus watching the sunset."
       },
@@ -40,7 +40,7 @@ export const PLAYLISTS = [
         duration: "5:14",
         spotifyUri: "spotify:track:5g7Yw8100x883838123456",
         youtubeId: "4YxNq4zO0M8",
-        audioUrl: "https://ia800300.us.archive.org/1/items/JagjitSinghGhazals/Safar%20Mein%20Dhoop.mp3",
+        audioUrl: "https://archive.org/download/JagjitSinghGhazals/Safar%20Mein%20Dhoop.mp3",
         cover: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=400&q=80",
         trivia: "The timeless ghazal loved by every highway night traveler."
       },
@@ -53,7 +53,7 @@ export const PLAYLISTS = [
         duration: "4:35",
         spotifyUri: "spotify:track:27uJ8090x9923838123456",
         youtubeId: "_J59qH7mXk0",
-        audioUrl: "https://ia800300.us.archive.org/1/items/KishoreKumarHits_201804/Yeh%20Shaam%20Mastani.mp3",
+        audioUrl: "https://archive.org/download/KishoreKumarHits_201804/Yeh%20Shaam%20Mastani.mp3",
         cover: "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=400&q=80",
         trivia: "RD Burman created the gentle rhythm mimicking bus tire hums on asphalt."
       },
@@ -66,7 +66,7 @@ export const PLAYLISTS = [
         duration: "4:30",
         spotifyUri: "spotify:track:17uJ8090x9923838123456",
         youtubeId: "a3-1k8K588k",
-        audioUrl: "https://ia800300.us.archive.org/1/items/KishoreKumarHits_201804/O%20Mere%20Dil%20Ke%20Chain.mp3",
+        audioUrl: "https://archive.org/download/KishoreKumarHits_201804/O%20Mere%20Dil%20Ke%20Chain.mp3",
         cover: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=400&q=80",
         trivia: "Top requested song on All India Radio Vividh Bharati."
       },
@@ -79,7 +79,7 @@ export const PLAYLISTS = [
         duration: "5:25",
         spotifyUri: "spotify:track:5187092688054e9042af9f",
         youtubeId: "L0vQ5wJz_S0",
-        audioUrl: "https://ia800300.us.archive.org/1/items/KishoreKumarHits_201804/Pal%20Pal%20Dil%20Ke%20Paas.mp3",
+        audioUrl: "https://archive.org/download/KishoreKumarHits_201804/Pal%20Pal%20Dil%20Ke%20Paas.mp3",
         cover: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80",
         trivia: "Written as a romantic letter sent by mail during a journey."
       },
@@ -92,7 +92,7 @@ export const PLAYLISTS = [
         duration: "4:15",
         spotifyUri: "spotify:track:493225457124a3eb161ffa",
         youtubeId: "vo1MykK4u8U",
-        audioUrl: "https://ia800300.us.archive.org/1/items/KishoreKumarHits_201804/Mere%20Sapno%20Ki%20Rani.mp3",
+        audioUrl: "https://archive.org/download/KishoreKumarHits_201804/Mere%20Sapno%20Ki%20Rani.mp3",
         cover: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=400&q=80",
         trivia: "Shot with Rajesh Khanna in a jeep alongside a toy train."
       },
@@ -105,7 +105,7 @@ export const PLAYLISTS = [
         duration: "4:20",
         spotifyUri: "spotify:track:519692933481e162a57d67",
         youtubeId: "5tT2v2k_p2k",
-        audioUrl: "https://ia800300.us.archive.org/1/items/KishoreKumarHits_201804/Ek%20Ajnabee%20Haseena%20Se.mp3",
+        audioUrl: "https://archive.org/download/KishoreKumarHits_201804/Ek%20Ajnabee%20Haseena%20Se.mp3",
         cover: "https://images.unsplash.com/photo-1519692933481-e162a57d6721?auto=format&fit=crop&w=400&q=80",
         trivia: "Classic train & highway journey romance song."
       },
@@ -118,7 +118,7 @@ export const PLAYLISTS = [
         duration: "4:40",
         spotifyUri: "spotify:track:441974231531c6227db76b",
         youtubeId: "a2v84k1290a",
-        audioUrl: "https://ia800300.us.archive.org/1/items/KishoreKumarHits_201804/Pyar%20Deewana%20Hota%20Hai.mp3",
+        audioUrl: "https://archive.org/download/KishoreKumarHits_201804/Pyar%20Deewana%20Hota%20Hai.mp3",
         cover: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=400&q=80",
         trivia: "Eternal classic sung by Kishore Da."
       },
@@ -131,7 +131,7 @@ export const PLAYLISTS = [
         duration: "3:58",
         spotifyUri: "spotify:track:507525428034b723cf961d",
         youtubeId: "a84k1290a2v",
-        audioUrl: "https://ia800300.us.archive.org/1/items/KishoreKumarHits_201804/Khaike%20Paan%20Banaraswala.mp3",
+        audioUrl: "https://archive.org/download/KishoreKumarHits_201804/Khaike%20Paan%20Banaraswala.mp3",
         cover: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=400&q=80",
         trivia: "Iconic energetic track played on every North Indian highway dhabas."
       }
@@ -151,7 +151,7 @@ export const PLAYLISTS = [
         duration: "4:05",
         spotifyUri: "spotify:track:1y4P125tJ8000000000000",
         youtubeId: "1y_4P125tJ8",
-        audioUrl: "https://ia800300.us.archive.org/1/items/90sIndipop/Dooba%20Dooba.mp3",
+        audioUrl: "https://archive.org/download/90sIndipop/Dooba%20Dooba.mp3",
         cover: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80",
         trivia: "The anthem of 90s school bus picnics and mountain journeys."
       },
@@ -164,7 +164,7 @@ export const PLAYLISTS = [
         duration: "3:48",
         spotifyUri: "spotify:track:4j89Y164L0R8J46mQp84tJ",
         youtubeId: "s_1u-3h70kY",
-        audioUrl: "https://ia800300.us.archive.org/1/items/LuckyAliHits/O%20Sanam.mp3",
+        audioUrl: "https://archive.org/download/LuckyAliHits/O%20Sanam.mp3",
         cover: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=400&q=80",
         trivia: "Lucky Ali's acoustic guitar rhythm mimics the swaying motion of a bus."
       },
@@ -177,7 +177,7 @@ export const PLAYLISTS = [
         duration: "4:50",
         spotifyUri: "spotify:track:0n9W3q8Q7oM00000000000",
         youtubeId: "0n9W3q8Q7oM",
-        audioUrl: "https://ia800300.us.archive.org/1/items/EuphoriaHits/Maeri.mp3",
+        audioUrl: "https://archive.org/download/EuphoriaHits/Maeri.mp3",
         cover: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=400&q=80",
         trivia: "Played on every college bus tour across Northern India."
       },
@@ -190,7 +190,7 @@ export const PLAYLISTS = [
         duration: "4:42",
         spotifyUri: "spotify:track:469854523086cc02fe5d88",
         youtubeId: "i2v2443_x8w",
-        audioUrl: "https://ia800300.us.archive.org/1/items/ShaanHits/Tanha%20Dil.mp3",
+        audioUrl: "https://archive.org/download/ShaanHits/Tanha%20Dil.mp3",
         cover: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=400&q=80",
         trivia: "The ultimate 2000s highway solo traveler anthem."
       },
@@ -203,7 +203,7 @@ export const PLAYLISTS = [
         duration: "4:52",
         spotifyUri: "spotify:track:507525428034b723cf961e",
         youtubeId: "p-0k8483_S8",
-        audioUrl: "https://ia800300.us.archive.org/1/items/90sBollywoodHits/Pehla%20Nasha.mp3",
+        audioUrl: "https://archive.org/download/90sBollywoodHits/Pehla%20Nasha.mp3",
         cover: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=400&q=80",
         trivia: "First Bollywood song shot entirely in slow motion."
       },
@@ -216,7 +216,7 @@ export const PLAYLISTS = [
         duration: "5:02",
         spotifyUri: "spotify:track:511671782779c97d3d27a1",
         youtubeId: "c2V-qA228wE",
-        audioUrl: "https://ia800300.us.archive.org/1/items/90sBollywoodHits/Tujhe%20Dekha%20To.mp3",
+        audioUrl: "https://archive.org/download/90sBollywoodHits/Tujhe%20Dekha%20To.mp3",
         cover: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=400&q=80",
         trivia: "The defining romantic anthem of 90s Indian cinema."
       }
@@ -236,7 +236,7 @@ export const PLAYLISTS = [
         duration: "3:30",
         spotifyUri: "spotify:track:519692933481e162a57d68",
         youtubeId: "gH6nZ3w-K9E",
-        audioUrl: "https://ia800300.us.archive.org/1/items/KishoreKumarHits_201804/Rimjhim%20Gire%20Sawan.mp3",
+        audioUrl: "https://archive.org/download/KishoreKumarHits_201804/Rimjhim%20Gire%20Sawan.mp3",
         cover: "https://images.unsplash.com/photo-1519692933481-e162a57d6721?auto=format&fit=crop&w=400&q=80",
         trivia: "Perfect song when rain trickles down the bus window frame."
       },
@@ -249,7 +249,7 @@ export const PLAYLISTS = [
         duration: "5:12",
         spotifyUri: "spotify:track:441974231531c6227db76c",
         youtubeId: "k-0a2A-e2k0",
-        audioUrl: "https://ia800300.us.archive.org/1/items/90sBollywoodHits/Chhod%20Aye%20Hum.mp3",
+        audioUrl: "https://archive.org/download/90sBollywoodHits/Chhod%20Aye%20Hum.mp3",
         cover: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=400&q=80",
         trivia: "Gulzar & Vishal Bhardwaj's masterpiece for long night journeys."
       },
@@ -262,7 +262,7 @@ export const PLAYLISTS = [
         duration: "5:03",
         spotifyUri: "spotify:track:507525428034b723cf961f",
         youtubeId: "3v83_S892wE",
-        audioUrl: "https://ia800300.us.archive.org/1/items/JagjitSinghGhazals/Hoshwalon%20Ko%20Khabar%20Kya.mp3",
+        audioUrl: "https://archive.org/download/JagjitSinghGhazals/Hoshwalon%20Ko%20Khabar%20Kya.mp3",
         cover: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=400&q=80",
         trivia: "Jagjit Singh's iconic ghazal for midnight roadside tea stalls."
       },
@@ -275,7 +275,7 @@ export const PLAYLISTS = [
         duration: "4:50",
         spotifyUri: "spotify:track:534447677768be436bb094",
         youtubeId: "2v40028w_0M",
-        audioUrl: "https://ia800300.us.archive.org/1/items/JagjitSinghGhazals/Tumko%20Dekha%20To.mp3",
+        audioUrl: "https://archive.org/download/JagjitSinghGhazals/Tumko%20Dekha%20To.mp3",
         cover: "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=400&q=80",
         trivia: "Essential midnight ghazal played on night bus journeys."
       },
@@ -288,7 +288,7 @@ export const PLAYLISTS = [
         duration: "4:18",
         spotifyUri: "spotify:track:5187092688054e9042af9g",
         youtubeId: "TFr6G5zveS8",
-        audioUrl: "https://ia800300.us.archive.org/1/items/LataMangeshkarHits/Lag%20Ja%20Gale.mp3",
+        audioUrl: "https://archive.org/download/LataMangeshkarHits/Lag%20Ja%20Gale.mp3",
         cover: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80",
         trivia: "Ranked among the top 5 greatest Indian songs of all time."
       }

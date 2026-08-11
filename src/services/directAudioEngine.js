@@ -4,10 +4,22 @@
 
 const SILENT_WAV_BASE64 = 'data:audio/wav;base64,UklGRjIAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';
 
+// Converts archive.org direct node IPs to high-availability CDN download URLs
+function normalizeAudioUrl(url) {
+  if (!url) return url;
+  if (url.includes('ia800300.us.archive.org/1/items/')) {
+    return url.replace('https://ia800300.us.archive.org/1/items/', 'https://archive.org/download/');
+  }
+  if (url.includes('archive.org/items/')) {
+    return url.replace('archive.org/items/', 'archive.org/download/');
+  }
+  return url;
+}
+
 class DirectAudioEngine {
   constructor() {
-    this.audio = typeof window !== 'undefined' ? new Audio() : null;
-    this.silentAnchor = typeof window !== 'undefined' ? new Audio(SILENT_WAV_BASE64) : null;
+    this.audio = null;
+    this.silentAnchor = null;
     this.currentUrl = null;
     this.isPlaying = false;
     this.isAnchorPlaying = false;
@@ -15,19 +27,53 @@ class DirectAudioEngine {
     this.onEndedCallbacks = new Set();
     this.onErrorCallbacks = new Set();
 
-    if (this.silentAnchor) {
-      this.silentAnchor.loop = true;
-    }
-
-    if (this.audio) {
-      this.initListeners();
+    if (typeof window !== 'undefined') {
+      this.initDomNodes();
     }
   }
 
+  initDomNodes() {
+    if (typeof document === 'undefined') return;
+
+    // 1. Primary Direct Audio DOM Node (Attached to document.body so Android Chrome won't GC it)
+    let existingAudio = document.getElementById('safar-direct-audio');
+    if (!existingAudio) {
+      existingAudio = document.createElement('audio');
+      existingAudio.id = 'safar-direct-audio';
+      existingAudio.setAttribute('preload', 'auto');
+      existingAudio.setAttribute('playsinline', 'true');
+      existingAudio.setAttribute('webkit-playsinline', 'true');
+      existingAudio.setAttribute('crossorigin', 'anonymous');
+      existingAudio.style.display = 'none';
+      document.body.appendChild(existingAudio);
+    }
+    this.audio = existingAudio;
+
+    // 2. Mobile Silent Anchor Loop DOM Node
+    let existingAnchor = document.getElementById('safar-silent-anchor');
+    if (!existingAnchor) {
+      existingAnchor = document.createElement('audio');
+      existingAnchor.id = 'safar-silent-anchor';
+      existingAnchor.setAttribute('preload', 'auto');
+      existingAnchor.setAttribute('playsinline', 'true');
+      existingAnchor.setAttribute('webkit-playsinline', 'true');
+      existingAnchor.loop = true;
+      existingAnchor.src = SILENT_WAV_BASE64;
+      existingAnchor.style.display = 'none';
+      document.body.appendChild(existingAnchor);
+    }
+    this.silentAnchor = existingAnchor;
+
+    this.initListeners();
+  }
+
   initListeners() {
+    if (!this.audio) return;
+
     this.audio.addEventListener('timeupdate', () => {
       const cur = this.audio.currentTime || 0;
       const dur = this.audio.duration && isFinite(this.audio.duration) ? this.audio.duration : 0;
+      this.updateMediaSessionPosition(cur, dur);
       this.onTimeUpdateCallbacks.forEach((cb) => cb(cur, dur));
     });
 
@@ -42,6 +88,20 @@ class DirectAudioEngine {
     });
   }
 
+  updateMediaSessionPosition(cur, dur) {
+    if (typeof window !== 'undefined' && 'mediaSession' in navigator && 'setPositionState' in navigator.mediaSession) {
+      try {
+        if (dur > 0 && cur >= 0 && cur <= dur) {
+          navigator.mediaSession.setPositionState({
+            duration: dur,
+            playbackRate: this.audio ? this.audio.playbackRate || 1 : 1,
+            position: cur
+          });
+        }
+      } catch (e) {}
+    }
+  }
+
   // Starts silent audio loop anchor to request Mobile OS Background Audio Wake-Lock
   async startSilentAnchor() {
     if (!this.silentAnchor) return;
@@ -49,7 +109,7 @@ class DirectAudioEngine {
       if (this.silentAnchor.paused) {
         await this.silentAnchor.play();
         this.isAnchorPlaying = true;
-        console.log('[DirectAudioEngine] Mobile Background Audio Silent Anchor started');
+        console.log('[DirectAudioEngine] Mobile Background Audio Silent Anchor started in DOM');
       }
     } catch (e) {
       console.warn('[DirectAudioEngine] Silent Anchor start warning:', e);
@@ -64,14 +124,19 @@ class DirectAudioEngine {
   }
 
   async playTrack(url, startTime = 0) {
+    if (!this.audio) {
+      this.initDomNodes();
+    }
     if (!this.audio) return false;
+
+    const normalizedUrl = normalizeAudioUrl(url);
 
     // Start silent anchor first to lock OS background audio permissions
     await this.startSilentAnchor();
 
-    if (this.currentUrl !== url) {
-      this.currentUrl = url;
-      this.audio.src = url;
+    if (this.currentUrl !== normalizedUrl) {
+      this.currentUrl = normalizedUrl;
+      this.audio.src = normalizedUrl;
       this.audio.load();
     }
 
@@ -84,7 +149,7 @@ class DirectAudioEngine {
     try {
       await this.audio.play();
       this.isPlaying = true;
-      console.log('[DirectAudioEngine] Direct audio track playing:', url);
+      console.log('[DirectAudioEngine] Direct audio track playing:', normalizedUrl);
       return true;
     } catch (err) {
       console.warn('[DirectAudioEngine] Direct audio playback failed:', err);
@@ -153,4 +218,5 @@ class DirectAudioEngine {
 }
 
 export const directAudioEngine = new DirectAudioEngine();
+
 
