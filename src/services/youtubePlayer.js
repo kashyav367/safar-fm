@@ -9,6 +9,7 @@ class YouTubePlayerEngine {
     this.isEndedGuard = false;
     this.onStateChangeCallbacks = new Set();
     this.onEndedCallbacks = new Set();
+    this.onErrorCallbacks = new Set();
     this.onTimeUpdateCallbacks = new Set();
     this.timeUpdateInterval = null;
 
@@ -62,15 +63,16 @@ class YouTubePlayerEngine {
         height: '100%',
         videoId: this.currentVideoId || 'N0jnLZxYwYc',
         playerVars: {
-          autoplay: 0,
+          autoplay: 1,
           controls: 1,
           disablekb: 0,
+          enablejsapi: 1,
           fs: 1,
           iv_load_policy: 3,
           modestbranding: 1,
           rel: 0,
           showinfo: 0,
-          origin: window.location.origin
+          origin: typeof window !== 'undefined' ? window.location.origin : ''
         },
         events: {
           onReady: (event) => {
@@ -98,6 +100,7 @@ class YouTubePlayerEngine {
           },
           onError: (event) => {
             console.error('[YouTubeEngine] Playback Error Code:', event.data);
+            this.onErrorCallbacks.forEach((cb) => cb(event.data));
             if (!this.isEndedGuard) {
               this.isEndedGuard = true;
               setTimeout(() => {
@@ -224,6 +227,11 @@ class YouTubePlayerEngine {
   onTimeUpdate(cb) {
     this.onTimeUpdateCallbacks.add(cb);
     return () => this.onTimeUpdateCallbacks.delete(cb);
+  }
+
+  onError(cb) {
+    this.onErrorCallbacks.add(cb);
+    return () => this.onErrorCallbacks.delete(cb);
   }
 }
 

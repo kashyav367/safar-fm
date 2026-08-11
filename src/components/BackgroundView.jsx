@@ -17,10 +17,10 @@ function BackgroundView({
 
   return (
     <div className="fixed inset-0 z-0 overflow-hidden select-none bg-black transform-gpu">
-      {/* Off-screen YouTube Player Container for background audio streaming */}
+      {/* In-viewport YouTube Player Container for uninterrupted audio streaming */}
       <div 
         id="youtube-player-container" 
-        className="fixed -top-[9999px] -left-[9999px] w-[320px] h-[180px] opacity-[0.01] pointer-events-none -z-50 overflow-hidden" 
+        className="fixed bottom-2 right-2 w-[160px] h-[90px] opacity-[0.01] pointer-events-none z-0 overflow-hidden" 
         aria-hidden="true"
       ></div>
 

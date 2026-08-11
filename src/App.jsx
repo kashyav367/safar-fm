@@ -10,7 +10,7 @@ import { ambientAudio } from './services/ambientAudio';
 import { youtubePlayer } from './services/youtubePlayer';
 import { directAudioEngine } from './services/directAudioEngine';
 import { realtimePassengerService } from './services/realtimePassengerService';
-import { Compass, Radio } from 'lucide-react';
+import { Radio } from 'lucide-react';
 
 export default function App() {
   // Playlist & Tracks State
@@ -24,9 +24,8 @@ export default function App() {
   // Highway Scene State ('sunset', 'monsoon', 'midnight', 'day')
   const [currentScene, setCurrentScene] = useState('sunset');
 
-  // Loading & Error State
+  // Loading State
   const [loadingPlaylist, setLoadingPlaylist] = useState(true);
-  const [playlistError, setPlaylistError] = useState(null);
 
   // Real-time Online Passengers State
   const [onlinePassengers, setOnlinePassengers] = useState(realtimePassengerService.getOnlinePassengers());
@@ -178,6 +177,14 @@ export default function App() {
       }
     });
 
+    const unsubYtError = youtubePlayer.onError((errCode) => {
+      console.warn(`[App] YouTube player error ${errCode} -> falling back to Direct Audio Engine`);
+      const activeTrack = tracks[currentTrackIndex];
+      if (activeTrack && activeTrack.audioUrl) {
+        directAudioEngine.playTrack(activeTrack.audioUrl, 0);
+      }
+    });
+
     const unsubDirectTime = directAudioEngine.onTimeUpdate((cur, dur) => {
       if (directAudioEngine.isPlaying) {
         const currentSec = Math.floor(cur);
@@ -208,6 +215,7 @@ export default function App() {
       unsubYtTime();
       unsubYtState();
       unsubYtEnded();
+      unsubYtError();
       unsubDirectTime();
       unsubDirectEnded();
       unsubDirectError();
@@ -275,40 +283,37 @@ export default function App() {
     }
   }, [currentTrack, isPlaying]);
 
-  // 4. Play current track via Direct Audio Engine (Master Background Stream) + YouTube CRT Screen
+  // 4. Play current track via YouTube Player + Silent DOM Background Audio Anchor
   const playTrackAtIndex = (index, trackList = tracks) => {
     if (trackList.length === 0) return;
     const targetTrack = trackList[index];
     if (!targetTrack) return;
 
-    console.log(`[App] Playing Track ${index + 1}/${trackList.length}: "${targetTrack.title}"`);
+    console.log(`[App] Playing Track ${index + 1}/${trackList.length}: "${targetTrack.title}" (${targetTrack.videoId || targetTrack.audioUrl})`);
 
     setIsPlaying(true);
     setCurrentTime(0);
 
-    // 1. Play HTML5 Direct Audio Engine immediately on User Gesture (guarantees Mobile OS background playback)
-    if (targetTrack.audioUrl) {
-      directAudioEngine.playTrack(targetTrack.audioUrl, 0);
-    }
+    // Ensure audio context and background anchor
+    ambientAudio.ensureContext();
+    directAudioEngine.startSilentAnchor();
 
-    // 2. Load YouTube video for CRT visual display, muting YT player if direct audio is playing to prevent double audio
+    // Play track via YouTube Player with Direct Audio fallback
     if (targetTrack.videoId) {
-      youtubePlayer.loadVideo(targetTrack.videoId, true);
-      if (targetTrack.audioUrl) {
-        setTimeout(() => {
-          try {
-            if (youtubePlayer.player && typeof youtubePlayer.player.mute === 'function') {
-              youtubePlayer.player.mute();
-            }
-          } catch (e) {}
-        }, 500);
+      const loaded = youtubePlayer.loadVideo(targetTrack.videoId, true);
+      if (!loaded && targetTrack.audioUrl) {
+        directAudioEngine.playTrack(targetTrack.audioUrl, 0);
       }
+    } else if (targetTrack.audioUrl) {
+      directAudioEngine.playTrack(targetTrack.audioUrl, 0);
     }
   };
 
   // 5. Play / Pause Handler
   const handlePlayPause = () => {
     ambientAudio.ensureContext();
+    directAudioEngine.startSilentAnchor();
+
     if (tracks.length === 0) return;
 
     if (isPlaying) {
@@ -318,11 +323,15 @@ export default function App() {
     } else {
       setIsPlaying(true);
       if (currentTrack) {
-        if (currentTrack.audioUrl) {
-          directAudioEngine.playTrack(currentTrack.audioUrl, currentTime);
-        }
-        if (currentTrack.videoId) {
+        if (directAudioEngine.currentUrl && directAudioEngine.audio && directAudioEngine.audio.paused) {
+          directAudioEngine.resume();
+        } else if (currentTrack.videoId) {
           youtubePlayer.play();
+          if (!youtubePlayer.isReady && currentTrack.audioUrl) {
+            directAudioEngine.playTrack(currentTrack.audioUrl, currentTime);
+          }
+        } else if (currentTrack.audioUrl) {
+          directAudioEngine.playTrack(currentTrack.audioUrl, currentTime);
         }
       }
     }

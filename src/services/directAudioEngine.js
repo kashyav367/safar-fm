@@ -147,6 +147,8 @@ class DirectAudioEngine {
     }
 
     try {
+      this.audio.muted = false;
+      this.audio.volume = 1.0;
       await this.audio.play();
       this.isPlaying = true;
       console.log('[DirectAudioEngine] Direct audio track playing:', normalizedUrl);
