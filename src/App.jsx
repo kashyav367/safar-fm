@@ -8,6 +8,7 @@ import SpotifyConnectModal from './components/SpotifyConnectModal';
 import { PLAYLISTS as LOCAL_PLAYLISTS, YOUTUBE_PLAYLISTS } from './data/playlists';
 import { ambientAudio } from './services/ambientAudio';
 import { youtubePlayer } from './services/youtubePlayer';
+import { directAudioEngine } from './services/directAudioEngine';
 import { realtimePassengerService } from './services/realtimePassengerService';
 import { Compass, Radio } from 'lucide-react';
 
@@ -86,6 +87,7 @@ export default function App() {
               videoId: t.youtubeId || 'N0jnLZxYwYc',
               title: `${t.title} - ${t.artist}`,
               artist: t.artist,
+              audioUrl: t.audioUrl,
               cover: t.cover,
               position: t.id
             }));
@@ -103,6 +105,7 @@ export default function App() {
             videoId: t.youtubeId || 'N0jnLZxYwYc',
             title: `${t.title} - ${t.artist}`,
             artist: t.artist,
+            audioUrl: t.audioUrl,
             cover: t.cover,
             position: t.id
           }));
@@ -132,36 +135,90 @@ export default function App() {
     };
   }, []);
 
-  // 3. Sync YouTube Player Listeners & Auto-Next on YT.PlayerState.ENDED
+  // 3. Sync Audio Engine Listeners (YouTube + Direct Audio) & Auto-Next on ENDED
   useEffect(() => {
-    const unsubTime = youtubePlayer.onTimeUpdate((cur, dur) => {
-      if (cur > 0) setCurrentTime(cur);
-      if (dur > 0) setDuration(dur);
+    const unsubYtTime = youtubePlayer.onTimeUpdate((cur, dur) => {
+      if (!directAudioEngine.isPlaying) {
+        if (cur > 0) setCurrentTime(cur);
+        if (dur > 0) setDuration(dur);
+      }
     });
 
-    const unsubState = youtubePlayer.onStateChange((state) => {
+    const unsubYtState = youtubePlayer.onStateChange((state) => {
       // 1 = PLAYING, 2 = PAUSED
       if (state === 1) {
         setIsPlaying(true);
         ambientAudio.stopRadioMelody();
       } else if (state === 2) {
-        setIsPlaying(false);
+        if (!directAudioEngine.isPlaying && !document.hidden) {
+          setIsPlaying(false);
+        }
       }
     });
 
-    const unsubEnded = youtubePlayer.onEnded(() => {
+    const unsubYtEnded = youtubePlayer.onEnded(() => {
       console.log('[App] YT.PlayerState.ENDED received -> triggering handleNextTrack()');
       handleNextTrack();
     });
 
+    const unsubDirectTime = directAudioEngine.onTimeUpdate((cur, dur) => {
+      if (directAudioEngine.isPlaying) {
+        if (cur > 0) setCurrentTime(cur);
+        if (dur > 0) setDuration(dur);
+      }
+    });
+
+    const unsubDirectEnded = directAudioEngine.onEnded(() => {
+      console.log('[App] DirectAudioEngine track ended -> triggering handleNextTrack()');
+      handleNextTrack();
+    });
+
     return () => {
-      unsubTime();
-      unsubState();
-      unsubEnded();
+      unsubYtTime();
+      unsubYtState();
+      unsubYtEnded();
+      unsubDirectTime();
+      unsubDirectEnded();
     };
   }, [currentTrackIndex, tracks.length]);
 
-  // 3b. Sync HTML5 Media Session API for OS Background Audio Controls (Windows/Mac/Android/iOS)
+  // 3b. Mobile App Switch & Visibility Change Handler (WhatsApp / Screen Lock Support)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (typeof document === 'undefined') return;
+
+      if (document.hidden) {
+        console.log('[App] Mobile app switched to background (e.g. WhatsApp opened or screen locked)');
+        // Request background wake-lock anchor
+        directAudioEngine.startSilentAnchor();
+
+        // If currently playing YouTube and track has an MP3 fallback stream, seamlessly fallback to Direct Audio
+        if (isPlaying && currentTrack && currentTrack.audioUrl && !directAudioEngine.isPlaying) {
+          const curPos = youtubePlayer.getCurrentTime() || currentTime;
+          console.log(`[App] Switching to Direct Audio stream for background play at ${curPos}s`);
+          directAudioEngine.playTrack(currentTrack.audioUrl, curPos);
+        }
+      } else {
+        console.log('[App] Mobile app returned to foreground');
+        // If Direct Audio was playing during background session, sync back to YouTube Player
+        if (directAudioEngine.isPlaying) {
+          const curPos = directAudioEngine.getCurrentTime();
+          directAudioEngine.pause();
+          if (currentTrack && currentTrack.videoId) {
+            youtubePlayer.seekTo(curPos);
+            youtubePlayer.play();
+          }
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [isPlaying, currentTrack, currentTime]);
+
+  // 3c. Sync HTML5 Media Session API for OS Background Audio Controls (Windows/Mac/Android/iOS)
   useEffect(() => {
     if (typeof window === 'undefined' || !('mediaSession' in navigator)) return;
 
@@ -188,7 +245,12 @@ export default function App() {
       ['play', () => handlePlayPause()],
       ['pause', () => handlePlayPause()],
       ['previoustrack', () => handlePrevTrack()],
-      ['nexttrack', () => handleNextTrack()]
+      ['nexttrack', () => handleNextTrack()],
+      ['seekto', (details) => {
+        if (details.seekTime !== undefined) {
+          handleSeek(details.seekTime);
+        }
+      }]
     ];
 
     for (const [action, handler] of actionHandlers) {
@@ -198,31 +260,51 @@ export default function App() {
     }
   }, [currentTrack, isPlaying]);
 
-  // 4. Play current track via YouTube Engine
+  // 4. Play current track via YouTube / Direct Audio Engine
   const playTrackAtIndex = (index, trackList = tracks) => {
     if (trackList.length === 0) return;
     const targetTrack = trackList[index];
-    if (!targetTrack || !targetTrack.videoId) return;
+    if (!targetTrack) return;
 
-    console.log(`[App] Playing Track ${index + 1}/${trackList.length}: "${targetTrack.title}" (${targetTrack.videoId})`);
+    console.log(`[App] Playing Track ${index + 1}/${trackList.length}: "${targetTrack.title}"`);
+
+    // Ensure silent audio anchor starts to hold mobile OS background permissions
+    directAudioEngine.startSilentAnchor();
 
     setIsPlaying(true);
     setCurrentTime(0);
-    youtubePlayer.loadVideo(targetTrack.videoId, true);
+
+    if (directAudioEngine.isPlaying) {
+      directAudioEngine.pause();
+    }
+
+    if (targetTrack.videoId) {
+      youtubePlayer.loadVideo(targetTrack.videoId, true);
+    } else if (targetTrack.audioUrl) {
+      directAudioEngine.playTrack(targetTrack.audioUrl, 0);
+    }
   };
 
   // 5. Play / Pause Handler
   const handlePlayPause = () => {
     ambientAudio.ensureContext();
+    directAudioEngine.startSilentAnchor();
     if (tracks.length === 0) return;
 
     if (isPlaying) {
       youtubePlayer.pause();
+      directAudioEngine.pause();
       setIsPlaying(false);
     } else {
       setIsPlaying(true);
-      if (currentTrack) {
-        youtubePlayer.play();
+      if (directAudioEngine.currentUrl && directAudioEngine.currentUrl === currentTrack?.audioUrl) {
+        directAudioEngine.playTrack(currentTrack.audioUrl, currentTime);
+      } else if (currentTrack) {
+        if (currentTrack.videoId) {
+          youtubePlayer.play();
+        } else if (currentTrack.audioUrl) {
+          directAudioEngine.playTrack(currentTrack.audioUrl, currentTime);
+        }
       }
     }
   };
@@ -263,6 +345,7 @@ export default function App() {
   // 8. Seek Handler
   const handleSeek = (newTime) => {
     youtubePlayer.seekTo(newTime);
+    directAudioEngine.seek(newTime);
     setCurrentTime(newTime);
   };
 

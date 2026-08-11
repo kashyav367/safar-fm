@@ -1,14 +1,23 @@
-// High-Performance Direct Audio Engine for Safar FM
-// Plays high-quality direct MP3 streams smoothly without embed blocks
+// High-Performance Direct Audio Engine & Mobile Background Audio Anchor for Safar FM
+// Enables continuous background audio playback on Mobile Browsers (Android Chrome, iOS Safari)
+// when switching to apps like WhatsApp or when screen is locked.
+
+const SILENT_WAV_BASE64 = 'data:audio/wav;base64,UklGRjIAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';
 
 class DirectAudioEngine {
   constructor() {
     this.audio = typeof window !== 'undefined' ? new Audio() : null;
+    this.silentAnchor = typeof window !== 'undefined' ? new Audio(SILENT_WAV_BASE64) : null;
     this.currentUrl = null;
     this.isPlaying = false;
+    this.isAnchorPlaying = false;
     this.onTimeUpdateCallbacks = new Set();
     this.onEndedCallbacks = new Set();
     this.onErrorCallbacks = new Set();
+
+    if (this.silentAnchor) {
+      this.silentAnchor.loop = true;
+    }
 
     if (this.audio) {
       this.initListeners();
@@ -28,13 +37,37 @@ class DirectAudioEngine {
     });
 
     this.audio.addEventListener('error', (e) => {
-      console.warn('Audio stream playback error, falling back:', e);
+      console.warn('[DirectAudioEngine] Audio stream error:', e);
       this.onErrorCallbacks.forEach((cb) => cb(e));
     });
   }
 
-  async playTrack(url) {
+  // Starts silent audio loop anchor to request Mobile OS Background Audio Wake-Lock
+  async startSilentAnchor() {
+    if (!this.silentAnchor) return;
+    try {
+      if (this.silentAnchor.paused) {
+        await this.silentAnchor.play();
+        this.isAnchorPlaying = true;
+        console.log('[DirectAudioEngine] Mobile Background Audio Silent Anchor started');
+      }
+    } catch (e) {
+      console.warn('[DirectAudioEngine] Silent Anchor start warning:', e);
+    }
+  }
+
+  stopSilentAnchor() {
+    if (this.silentAnchor && !this.silentAnchor.paused) {
+      this.silentAnchor.pause();
+      this.isAnchorPlaying = false;
+    }
+  }
+
+  async playTrack(url, startTime = 0) {
     if (!this.audio) return false;
+
+    // Start silent anchor first to lock OS background audio permissions
+    await this.startSilentAnchor();
 
     if (this.currentUrl !== url) {
       this.currentUrl = url;
@@ -42,12 +75,19 @@ class DirectAudioEngine {
       this.audio.load();
     }
 
+    if (startTime > 0 && isFinite(startTime)) {
+      try {
+        this.audio.currentTime = startTime;
+      } catch (e) {}
+    }
+
     try {
       await this.audio.play();
       this.isPlaying = true;
+      console.log('[DirectAudioEngine] Direct audio track playing:', url);
       return true;
     } catch (err) {
-      console.warn('Autoplay audio blocked or error:', err);
+      console.warn('[DirectAudioEngine] Direct audio playback failed:', err);
       this.isPlaying = false;
       return false;
     }
@@ -62,8 +102,18 @@ class DirectAudioEngine {
 
   seek(seconds) {
     if (this.audio && isFinite(seconds)) {
-      this.audio.currentTime = seconds;
+      try {
+        this.audio.currentTime = seconds;
+      } catch (e) {}
     }
+  }
+
+  getCurrentTime() {
+    return this.audio ? this.audio.currentTime || 0 : 0;
+  }
+
+  getDuration() {
+    return this.audio && isFinite(this.audio.duration) ? this.audio.duration : 0;
   }
 
   setVolume(vol) {
@@ -89,3 +139,4 @@ class DirectAudioEngine {
 }
 
 export const directAudioEngine = new DirectAudioEngine();
+
