@@ -17,7 +17,7 @@ export default async function handler(req, res) {
   }
 
   const apiKey = process.env.YOUTUBE_API_KEY;
-  const playlistId = process.env.YOUTUBE_PLAYLIST_ID || 'PL2Di--NcQaJNIcXxMYUPtvxdGP2hbn0l1';
+  const playlistId = req.query?.playlistId || process.env.YOUTUBE_PLAYLIST_ID || 'PLjSDelb8LaOfQ8pLA_uIF73qxuznCtCVC';
 
   if (!apiKey) {
     return res.status(500).json({ error: 'YOUTUBE_API_KEY environment variable missing in Vercel settings.' });

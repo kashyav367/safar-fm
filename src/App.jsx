@@ -5,19 +5,23 @@ import SaloonPlayer from './components/SaloonPlayer';
 import PassengersModal from './components/PassengersModal';
 import AmbientSoundDeck from './components/AmbientSoundDeck';
 import SpotifyConnectModal from './components/SpotifyConnectModal';
-import { PLAYLISTS as LOCAL_PLAYLISTS } from './data/playlists';
+import { PLAYLISTS as LOCAL_PLAYLISTS, YOUTUBE_PLAYLISTS } from './data/playlists';
 import { ambientAudio } from './services/ambientAudio';
 import { youtubePlayer } from './services/youtubePlayer';
 import { realtimePassengerService } from './services/realtimePassengerService';
 import { Compass, Radio } from 'lucide-react';
 
 export default function App() {
-  // Dynamic YouTube Tracks State
+  // Playlist & Tracks State
+  const [activePlaylistId, setActivePlaylistId] = useState(YOUTUBE_PLAYLISTS[0].id);
   const [tracks, setTracks] = useState([]);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+
+  // Highway Scene State ('sunset', 'monsoon', 'midnight', 'day')
+  const [currentScene, setCurrentScene] = useState('sunset');
 
   // Loading & Error State
   const [loadingPlaylist, setLoadingPlaylist] = useState(true);
@@ -36,7 +40,7 @@ export default function App() {
   // Active track derived from dynamic tracks array or fallback
   const currentTrack = tracks.length > 0 ? tracks[currentTrackIndex] : null;
 
-  // 1. Fetch Dynamic YouTube Playlist on Mount
+  // 1. Fetch Dynamic YouTube Playlist when activePlaylistId changes
   useEffect(() => {
     let isMounted = true;
     async function fetchPlaylist() {
@@ -44,7 +48,28 @@ export default function App() {
         setLoadingPlaylist(true);
         setPlaylistError(null);
 
-        const res = await fetch('/api/youtube/playlist');
+        // Check if active playlist is a single video jukebox entry
+        const matchedMeta = YOUTUBE_PLAYLISTS.find((p) => p.id === activePlaylistId);
+        if (matchedMeta && matchedMeta.isVideoJukebox) {
+          if (isMounted) {
+            setTracks([
+              {
+                id: `yt-single-${matchedMeta.videoId}`,
+                videoId: matchedMeta.videoId,
+                title: matchedMeta.name,
+                artist: matchedMeta.tagline,
+                cover: `https://img.youtube.com/vi/${matchedMeta.videoId}/hqdefault.jpg`,
+                position: 0,
+                source: 'youtube'
+              }
+            ]);
+            setCurrentTrackIndex(0);
+            setLoadingPlaylist(false);
+          }
+          return;
+        }
+
+        const res = await fetch(`/api/youtube/playlist?playlistId=${encodeURIComponent(activePlaylistId)}`);
         if (!res.ok) {
           throw new Error('Unable to load Safar FM playlist. Please try again.');
         }
@@ -53,6 +78,7 @@ export default function App() {
         if (isMounted) {
           if (data.tracks && Array.isArray(data.tracks) && data.tracks.length > 0) {
             setTracks(data.tracks);
+            setCurrentTrackIndex(0);
           } else {
             // Fallback to local playlist tracks if empty
             const fallbackTracks = LOCAL_PLAYLISTS[0].tracks.map((t) => ({
@@ -64,6 +90,7 @@ export default function App() {
               position: t.id
             }));
             setTracks(fallbackTracks);
+            setCurrentTrackIndex(0);
           }
           setLoadingPlaylist(false);
         }
@@ -80,6 +107,7 @@ export default function App() {
             position: t.id
           }));
           setTracks(fallbackTracks);
+          setCurrentTrackIndex(0);
           setLoadingPlaylist(false);
         }
       }
@@ -89,7 +117,7 @@ export default function App() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [activePlaylistId]);
 
   // 2. Sync Real-time Passengers
   useEffect(() => {
@@ -134,12 +162,12 @@ export default function App() {
   }, [currentTrackIndex, tracks.length]);
 
   // 4. Play current track via YouTube Engine
-  const playTrackAtIndex = (index) => {
-    if (tracks.length === 0) return;
-    const targetTrack = tracks[index];
+  const playTrackAtIndex = (index, trackList = tracks) => {
+    if (trackList.length === 0) return;
+    const targetTrack = trackList[index];
     if (!targetTrack || !targetTrack.videoId) return;
 
-    console.log(`[App] Playing Track ${index + 1}/${tracks.length}: "${targetTrack.title}" (${targetTrack.videoId})`);
+    console.log(`[App] Playing Track ${index + 1}/${trackList.length}: "${targetTrack.title}" (${targetTrack.videoId})`);
 
     setIsPlaying(true);
     setCurrentTime(0);
@@ -162,6 +190,16 @@ export default function App() {
     }
   };
 
+  // Scene rotation list
+  const scenesList = ['sunset', 'monsoon', 'midnight', 'day'];
+
+  // Rotate scene on track change for visual variety
+  const rotateSceneNext = () => {
+    const currentIndex = scenesList.indexOf(currentScene);
+    const nextScene = scenesList[(currentIndex + 1) % scenesList.length];
+    setCurrentScene(nextScene);
+  };
+
   // 6. Next Track Handler (Wrap-around from end to 0)
   const handleNextTrack = () => {
     ambientAudio.playRadioStatic(0.3);
@@ -170,6 +208,7 @@ export default function App() {
     const nextIndex = (currentTrackIndex + 1) % tracks.length;
     console.log(`[App] Next Track: ${currentTrackIndex} -> ${nextIndex}`);
     setCurrentTrackIndex(nextIndex);
+    rotateSceneNext();
     playTrackAtIndex(nextIndex);
   };
 
@@ -190,9 +229,20 @@ export default function App() {
     setCurrentTime(newTime);
   };
 
-  // 9. Track Selection from Playlist Menu
+  // 9. Select Playlist Handler
+  const handleSelectPlaylist = (playlistId) => {
+    ambientAudio.playRadioStatic(0.4);
+    if (playlistId !== activePlaylistId) {
+      setActivePlaylistId(playlistId);
+    }
+  };
+
+  // 10. Track Selection from Playlist Menu
   const handleSelectTrack = (playlistId, index) => {
     ambientAudio.playRadioStatic(0.4);
+    if (playlistId !== activePlaylistId) {
+      setActivePlaylistId(playlistId);
+    }
     if (index >= 0 && index < tracks.length) {
       setCurrentTrackIndex(index);
       playTrackAtIndex(index);
@@ -206,12 +256,12 @@ export default function App() {
   };
 
   // Cinematic Loading View
-  if (loadingPlaylist) {
+  if (loadingPlaylist && tracks.length === 0) {
     return (
       <div className="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center text-center p-6 select-none">
         <div className="saloon-glass p-8 rounded-3xl border border-amber-500/30 max-w-sm flex flex-col items-center gap-4 animate-pulse">
           <div className="p-4 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/40">
-            <Radio className="w-8 h-8 animate-spin" />
+            <Radio className="w-8 h-8 animate-spin text-amber-400" />
           </div>
           <div>
             <h2 className="text-xl font-extrabold text-white font-devanagari">
@@ -226,22 +276,30 @@ export default function App() {
     );
   }
 
-  // Adapted Playlist object for SaloonPlayer compatibility
-  const dynamicPlaylistForUI = [
-    {
-      id: 'youtube-playlist',
-      name: 'सफ़र FM Highway Radio',
-      tagline: `${tracks.length} Iconic Bollywood Highway Songs`,
-      tracks: tracks.map((t) => ({
-        id: t.id,
-        title: t.title,
-        artist: t.artist || 'YouTube',
-        movie: 'Safar Highway Special',
-        duration: duration > 0 ? `${Math.floor(duration / 60)}:${Math.floor(duration % 60).toString().padStart(2, '0')}` : '0:00',
-        cover: t.cover
-      }))
-    }
-  ];
+  // Adapted Playlist objects for SaloonPlayer compatibility
+  const activePlaylistMeta = YOUTUBE_PLAYLISTS.find(p => p.id === activePlaylistId) || YOUTUBE_PLAYLISTS[0];
+  
+  const dynamicPlaylistForUI = YOUTUBE_PLAYLISTS.map((pl) => {
+    const isCurrentPl = pl.id === activePlaylistId;
+    return {
+      id: pl.id,
+      name: pl.name,
+      hindiName: pl.hindiName,
+      tagline: pl.tagline,
+      category: pl.category,
+      badge: pl.badge,
+      tracks: isCurrentPl 
+        ? tracks.map((t) => ({
+            id: t.id,
+            title: t.title,
+            artist: t.artist && t.artist !== 'undefined' ? t.artist : 'Safar FM',
+            movie: pl.hindiName || 'Safar Highway Special',
+            duration: duration > 0 && currentTrack?.id === t.id ? `${Math.floor(duration / 60)}:${Math.floor(duration % 60).toString().padStart(2, '0')}` : 'Radio Track',
+            cover: t.cover
+          }))
+        : []
+    };
+  });
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden select-none bg-black">
@@ -254,10 +312,12 @@ export default function App() {
         currentTrack={currentTrack}
       />
 
-      {/* Single Main Vintage Bus Interior Background with Embedded YouTube Player */}
+      {/* Dynamic Animated Parallax Bus Interior & Highway Background */}
       <BackgroundView
         currentTrack={currentTrack}
         isPlaying={isPlaying}
+        currentScene={currentScene}
+        onSelectScene={(sceneId) => setCurrentScene(sceneId)}
       />
 
       {/* Floating Bottom Audio Player */}
@@ -271,8 +331,8 @@ export default function App() {
         onPrevTrack={handlePrevTrack}
         onNextTrack={handleNextTrack}
         onSeek={handleSeek}
-        activePlaylistId="youtube-playlist"
-        onSelectPlaylist={() => {}}
+        activePlaylistId={activePlaylistId}
+        onSelectPlaylist={handleSelectPlaylist}
         onSelectTrack={handleSelectTrack}
         customPlaylists={dynamicPlaylistForUI}
       />

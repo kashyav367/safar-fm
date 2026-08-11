@@ -296,8 +296,35 @@ export const PLAYLISTS = [
   }
 ];
 
+export const YOUTUBE_PLAYLISTS = [
+  {
+    id: "PL2Di--NcQaJNIcXxMYUPtvxdGP2hbn0l1",
+    name: "📻 70s & 80s Golden Classics",
+    hindiName: "गोल्डन क्लासिक्स (Kishore & RD Burman)",
+    tagline: "Kishore Kumar, RD Burman, Mohammed Rafi & 70s Evergreen Road Songs",
+    category: "Golden Oldies",
+    badge: "70s/80s CLASSICS"
+  },
+  {
+    id: "PLjSDelb8LaOfQ8pLA_uIF73qxuznCtCVC",
+    name: "🎙️ Arijit Singh & Modern Romantic",
+    hindiName: "अरिजीत सिंह व आधुनिक नग्मे",
+    tagline: "Arijit Singh, Mohit Chauhan, Atif Aslam & Soulful Highway Melodies",
+    category: "Arijit & Modern",
+    badge: "ARIJIT SPECIAL"
+  },
+  {
+    id: "PLluqBUTOXDHUjNguM2wgfaVJhC0OHTTqB",
+    name: "🚌 Nostalgic Roadtrip & Travelling Songs",
+    hindiName: "सफ़र स्पेशल (Roadtrip Anthems)",
+    tagline: "Ultimate Highway Roadtrip & Bus Journey Nostalgia Collection",
+    category: "Travelling Hits",
+    badge: "ROADTRIP SPECIAL"
+  }
+];
+
 export const SPOTIFY_PLAYLIST_URL = "https://open.spotify.com/playlist/2AVjI8Z57bqMJVtU3V9X1Q";
-export const YOUTUBE_PLAYLIST_URL = "https://music.youtube.com/playlist?list=PLTJ1PnzCWyFw";
+export const YOUTUBE_PLAYLIST_URL = "https://music.youtube.com/playlist?list=PLjSDelb8LaOfQ8pLA_uIF73qxuznCtCVC";
 
 export function getTrackSpotifyUrl(track) {
   if (track && track.spotifyUrl) return track.spotifyUrl;

@@ -27,18 +27,31 @@ function loadEnvLocal() {
 }
 
 function youtubePlaylistPlugin() {
+  const cache = new Map();
+  const CACHE_TTL = 10 * 60 * 1000; // 10 minutes cache
+
   return {
     name: 'youtube-playlist-api',
     configureServer(server) {
       server.middlewares.use('/api/youtube/playlist', async (req, res, next) => {
         loadEnvLocal();
         const apiKey = process.env.YOUTUBE_API_KEY;
-        const playlistId = process.env.YOUTUBE_PLAYLIST_ID || 'PL2Di--NcQaJNIcXxMYUPtvxdGP2hbn0l1';
+        const reqUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+        const playlistId = reqUrl.searchParams.get('playlistId') || process.env.YOUTUBE_PLAYLIST_ID || 'PLjSDelb8LaOfQ8pLA_uIF73qxuznCtCVC';
 
         if (!apiKey) {
           res.statusCode = 500;
           res.setHeader('Content-Type', 'application/json');
           res.end(JSON.stringify({ error: 'YOUTUBE_API_KEY missing in server environment.' }));
+          return;
+        }
+
+        // Check cache
+        const cached = cache.get(playlistId);
+        if (cached && (Date.now() - cached.timestamp < CACHE_TTL)) {
+          res.statusCode = 200;
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify(cached.data));
           return;
         }
 
@@ -54,7 +67,14 @@ function youtubePlaylistPlugin() {
 
             if (!apiRes.ok) {
               const errText = await apiRes.text();
-              console.error(`[YouTube API Error] Status: ${apiRes.status}`);
+              console.error(`[YouTube API Error] Status: ${apiRes.status}`, errText);
+              // If cached version exists even if expired, return it on API error
+              if (cached) {
+                res.statusCode = 200;
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify(cached.data));
+                return;
+              }
               res.statusCode = apiRes.status;
               res.setHeader('Content-Type', 'application/json');
               res.end(JSON.stringify({ error: 'Unable to load Safar FM playlist. Please try again.' }));
@@ -92,21 +112,30 @@ function youtubePlaylistPlugin() {
                 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=400&q=80';
 
               return {
-                id: item.id || `yt-${index}`,
+                id: item.id || `yt-${playlistId}-${index}`,
                 videoId: snippet.resourceId.videoId,
                 title: snippet.title || `Highway Track ${index + 1}`,
-                artist: 'YouTube',
+                artist: snippet.videoOwnerChannelTitle || 'Safar FM Radio',
                 cover,
                 position: snippet.position ?? index,
                 source: 'youtube'
               };
             });
 
+          const responseData = { playlistId, count: tracks.length, tracks };
+          cache.set(playlistId, { timestamp: Date.now(), data: responseData });
+
           res.statusCode = 200;
           res.setHeader('Content-Type', 'application/json');
-          res.end(JSON.stringify({ playlistId, count: tracks.length, tracks }));
+          res.end(JSON.stringify(responseData));
         } catch (err) {
           console.error('[YouTube API Middleware Exception]:', err.message);
+          if (cached) {
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify(cached.data));
+            return;
+          }
           res.statusCode = 500;
           res.setHeader('Content-Type', 'application/json');
           res.end(JSON.stringify({ error: 'Unable to load Safar FM playlist.' }));

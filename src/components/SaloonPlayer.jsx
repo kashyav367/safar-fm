@@ -32,11 +32,8 @@ export default function SaloonPlayer({
   const progressPercent = isLive ? (isPlaying ? ((currentTime % 60) / 60) * 100 : 0) : ((currentTime / duration) * 100);
 
   return (
-    <div className="fixed bottom-[4vh] sm:bottom-[6vh] inset-x-0 z-30 flex flex-col items-center px-4 pointer-events-none">
-      
-
-
-      {/* Main Glassmorphism Audio Player Pill (Matching saloon.wtf) */}
+    <div className="fixed bottom-[3vh] sm:bottom-[4vh] inset-x-0 z-30 flex flex-col items-center px-4 pointer-events-none">
+      {/* Main Glassmorphism Audio Player Pill */}
       <div className="w-full max-w-xl pointer-events-auto relative">
         
         {/* Playlist & Track Selector Dropdown Modal */}
@@ -44,61 +41,94 @@ export default function SaloonPlayer({
           <div className="absolute bottom-full mb-3 inset-x-0 saloon-glass rounded-2xl p-4 border border-white/20 shadow-2xl animate-fade-in z-40">
             <div className="flex items-center justify-between mb-3 border-b border-white/10 pb-2">
               <div className="flex items-center gap-2">
-                <Radio className="w-4 h-4 text-amber-400" />
+                <Radio className="w-4 h-4 text-amber-400 animate-pulse" />
                 <h3 className="text-sm font-bold text-white uppercase tracking-wider">
-                  Select Safar FM Song & Station
+                  Safar FM Radio Stations & Playlists
                 </h3>
               </div>
               <button 
                 onClick={() => setShowPlaylists(false)}
-                className="text-xs text-white/60 hover:text-white"
+                className="text-xs text-white/60 hover:text-white px-2 py-0.5 rounded-md hover:bg-white/10"
               >
                 Close ✕
               </button>
             </div>
+
+            {/* Station Quick Switcher Tabs */}
+            <div className="flex items-center gap-1.5 mb-3 overflow-x-auto pb-1 scrollbar-none">
+              {activePlaylists.map((pl) => {
+                const isSelected = activePlaylistId === pl.id;
+                return (
+                  <button
+                    key={`tab-${pl.id}`}
+                    onClick={() => {
+                      if (onSelectPlaylist) onSelectPlaylist(pl.id);
+                    }}
+                    className={`shrink-0 text-left px-3 py-1.5 rounded-xl transition flex flex-col gap-0.5 border ${
+                      isSelected
+                        ? 'bg-amber-400 text-black border-amber-300 font-extrabold shadow-md scale-[1.02]'
+                        : 'bg-white/5 text-white/80 border-white/10 hover:bg-white/15 hover:text-white'
+                    }`}
+                  >
+                    <span className="text-xs font-bold truncate">{pl.name}</span>
+                    <span className={`text-[9px] font-mono uppercase ${isSelected ? 'text-black/80' : 'text-amber-300/90'}`}>
+                      {pl.badge || pl.tagline?.slice(0, 24)}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
             
-            <div className="space-y-3 max-h-64 overflow-y-auto pr-1">
-              {activePlaylists.map((pl) => (
-                <div key={pl.id} className="space-y-1">
-                  <div className="text-[11px] font-bold text-amber-300 uppercase tracking-wider px-1 pt-1">
-                    📻 {pl.name}
-                  </div>
-                  {pl.tracks.map((tr, idx) => {
-                    const isCurrent = activePlaylistId === pl.id && currentTrackIndex === idx;
-                    return (
-                      <button
-                        key={tr.id}
-                        onClick={() => {
-                          if (onSelectTrack) {
-                            onSelectTrack(pl.id, idx);
-                          } else {
-                            onSelectPlaylist(pl.id);
-                          }
-                          setShowPlaylists(false);
-                        }}
-                        className={`w-full text-left px-3 py-2 rounded-xl transition flex items-center justify-between border ${
-                          isCurrent
-                            ? 'bg-amber-500/30 border-amber-400 text-white font-semibold shadow-md'
-                            : 'bg-white/5 border-transparent text-white/80 hover:bg-white/10 hover:text-white'
-                        }`}
-                      >
-                        <div className="flex items-center gap-2.5 min-w-0">
-                          <span className="text-xs font-mono text-amber-400 font-bold shrink-0">
-                            {isCurrent && isPlaying ? '▶' : `${idx + 1}.`}
-                          </span>
-                          <div className="min-w-0">
-                            <p className="text-xs font-bold truncate">{tr.title}</p>
-                            <p className="text-[10px] text-white/60 truncate">{tr.artist} • {tr.movie}</p>
+            <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
+              {activePlaylists
+                .filter((pl) => pl.id === activePlaylistId)
+                .map((pl) => (
+                  <div key={pl.id} className="space-y-1.5">
+                    <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider px-2 py-1 bg-amber-500/10 rounded-lg border border-amber-400/20">
+                      <span className="text-amber-300 font-extrabold">{pl.name}</span>
+                      <span className="text-[10px] text-emerald-400 font-mono font-bold">
+                        ● LIVE STATION ({pl.tracks.length} SONGS)
+                      </span>
+                    </div>
+
+                    {pl.tracks.map((tr, idx) => {
+                      const isCurrent = currentTrackIndex === idx;
+                      return (
+                        <button
+                          key={tr.id}
+                          onClick={() => {
+                            if (onSelectTrack) {
+                              onSelectTrack(pl.id, idx);
+                            }
+                            setShowPlaylists(false);
+                          }}
+                          className={`w-full text-left px-3 py-2 rounded-xl transition flex items-center justify-between border ${
+                            isCurrent
+                              ? 'bg-amber-500/30 border-amber-400 text-white font-semibold shadow-md'
+                              : 'bg-white/5 border-transparent text-white/80 hover:bg-white/10 hover:text-white'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <span className="text-xs font-mono text-amber-400 font-bold shrink-0">
+                              {isCurrent && isPlaying ? '▶' : `${idx + 1}.`}
+                            </span>
+                            <div className="min-w-0">
+                              <p className="text-xs font-bold truncate">{tr.title}</p>
+                              <p className="text-[10px] text-white/60 truncate">
+                                {tr.artist && tr.artist !== 'undefined' ? tr.artist : 'Safar FM'} • {tr.movie && tr.movie !== 'undefined' ? tr.movie : 'Highway Special'}
+                              </p>
+                            </div>
                           </div>
-                        </div>
-                        <span className="text-[10px] bg-white/10 px-2 py-0.5 rounded-full font-mono text-amber-300 shrink-0">
-                          {tr.duration}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              ))}
+                          {tr.duration && (
+                            <span className="text-[10px] bg-white/10 px-2 py-0.5 rounded-full font-mono text-amber-300 shrink-0">
+                              {tr.duration}
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                ))}
             </div>
           </div>
         )}
@@ -148,7 +178,9 @@ export default function SaloonPlayer({
             </div>
 
             <p className="truncate text-[11px] sm:text-xs text-white/70">
-              {currentTrack ? `${currentTrack.artist} • ${currentTrack.movie}` : 'Kishore Kumar • Andaz (1971)'}
+              {currentTrack 
+                ? `${currentTrack.artist && currentTrack.artist !== 'undefined' ? currentTrack.artist : 'Safar FM'} • ${currentTrack.movie && currentTrack.movie !== 'undefined' ? currentTrack.movie : 'Highway Special'}` 
+                : 'Kishore Kumar • Andaz (1971)'}
             </p>
 
             {/* Custom Interactive Seek Bar */}
