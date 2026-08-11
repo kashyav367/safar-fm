@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Radio } from 'lucide-react';
 
-export default function BackgroundView({ 
+function BackgroundView({ 
   isPlaying, 
   currentTrack, 
   currentScene = 'sunset'
@@ -16,18 +16,18 @@ export default function BackgroundView({
   const activeSceneObj = scenes.find(s => s.id === currentScene) || scenes[0];
 
   return (
-    <div className="fixed inset-0 z-0 overflow-hidden select-none bg-black">
-      {/* Off-screen YouTube Player Container for seamless audio streaming */}
+    <div className="fixed inset-0 z-0 overflow-hidden select-none bg-black transform-gpu">
+      {/* Off-screen YouTube Player Container for background audio streaming */}
       <div 
         id="youtube-player-container" 
-        className="fixed top-0 left-0 w-1 h-1 opacity-0 pointer-events-none -z-50 overflow-hidden" 
+        className="fixed -top-[9999px] -left-[9999px] w-[320px] h-[180px] opacity-[0.01] pointer-events-none -z-50 overflow-hidden" 
         aria-hidden="true"
       ></div>
 
       {/* Layer 1: Passing Highway Scenery (Trees & Streetlight Glows through Windshield) */}
-      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none transform-gpu">
         {/* Passing Scenery Silhouette Layer */}
-        <div className={`absolute top-[28%] inset-x-0 h-32 flex items-end opacity-40 transition-opacity ${isPlaying ? 'animate-scenery-pass' : ''}`}>
+        <div className={`absolute top-[28%] inset-x-0 h-32 flex items-end opacity-40 transition-opacity transform-gpu ${isPlaying ? 'animate-scenery-pass' : ''}`}>
           <div className="flex shrink-0 space-x-24 px-4">
             {[...Array(10)].map((_, i) => (
               <div key={i} className="flex items-end space-x-12 shrink-0">
@@ -48,7 +48,7 @@ export default function BackgroundView({
 
         {/* Passing Streetlamp Light Sweep across Cabin when playing */}
         {isPlaying && (
-          <div className="absolute inset-0 z-20 pointer-events-none overflow-hidden">
+          <div className="absolute inset-0 z-20 pointer-events-none overflow-hidden transform-gpu">
             <div className="w-full h-full bg-gradient-to-r from-transparent via-amber-300/10 to-transparent animate-light-sweep"></div>
           </div>
         )}
@@ -60,7 +60,7 @@ export default function BackgroundView({
         return (
           <div
             key={scene.id}
-            className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-1000 ease-in-out transform scale-105 ${
+            className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-1000 ease-in-out transform-gpu scale-105 ${
               isActive ? 'opacity-100 z-10' : 'opacity-0 z-0'
             }`}
             style={{ backgroundImage: `url('${scene.bg}')` }}
@@ -71,7 +71,7 @@ export default function BackgroundView({
       })}
 
       {/* Layer 3: Title Header Banner */}
-      <div className="absolute top-[11vh] sm:top-[13vh] inset-x-0 z-30 flex flex-col items-center justify-center text-center px-4 pointer-events-none">
+      <div className="absolute top-[11vh] sm:top-[13vh] inset-x-0 z-30 flex flex-col items-center justify-center text-center px-4 pointer-events-none transform-gpu">
         <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-500/20 border border-amber-400/40 text-amber-300 text-xs font-semibold uppercase tracking-widest backdrop-blur-md mb-2 drop-shadow-md">
           <Radio className={`w-3.5 h-3.5 text-amber-400 ${isPlaying ? 'animate-pulse' : ''}`} />
           <span>Safar FM • 92.7 MHz • {activeSceneObj.name}</span>
@@ -91,6 +91,8 @@ export default function BackgroundView({
     </div>
   );
 }
+
+export default memo(BackgroundView);
 
 
 

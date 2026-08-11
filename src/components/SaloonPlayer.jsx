@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import { Play, Pause, SkipBack, SkipForward, Radio, Heart, Coffee, CloudRain, Disc, Volume2, VolumeX, MessageSquare, Sparkles } from 'lucide-react';
 import { PLAYLISTS } from '../data/playlists';
 
-export default function SaloonPlayer({
+function SaloonPlayer({
   currentTrack,
   currentTrackIndex,
   isPlaying,
@@ -32,9 +32,9 @@ export default function SaloonPlayer({
   const progressPercent = isLive ? (isPlaying ? ((currentTime % 60) / 60) * 100 : 0) : ((currentTime / duration) * 100);
 
   return (
-    <div className="fixed bottom-[3vh] sm:bottom-[4vh] inset-x-0 z-30 flex flex-col items-center px-4 pointer-events-none">
+    <div className="fixed bottom-[3vh] sm:bottom-[4vh] inset-x-0 z-30 flex flex-col items-center px-4 pointer-events-none transform-gpu">
       {/* Main Glassmorphism Audio Player Pill */}
-      <div className="w-full max-w-xl pointer-events-auto relative">
+      <div className="w-full max-w-xl pointer-events-auto relative transform-gpu">
         
         {/* Playlist & Track Selector Dropdown Modal */}
         {showPlaylists && (
@@ -134,7 +134,7 @@ export default function SaloonPlayer({
         )}
 
         {/* Player Bar Frame */}
-        <div className="group relative flex items-center gap-3 sm:gap-4 rounded-full p-2.5 sm:p-3 pr-4 sm:pr-5 saloon-glass border border-white/20 shadow-[0_8px_40px_rgba(0,0,0,0.65)] backdrop-blur-2xl">
+        <div className="group relative flex items-center gap-3 sm:gap-4 rounded-full p-2.5 sm:p-3 pr-4 sm:pr-5 saloon-glass border border-white/20 shadow-[0_8px_40px_rgba(0,0,0,0.65)] backdrop-blur-2xl transform-gpu">
           
           {/* Spinning Cassette/Record Artwork Circle */}
           <div 
@@ -258,3 +258,5 @@ export default function SaloonPlayer({
     </div>
   );
 }
+
+export default memo(SaloonPlayer);

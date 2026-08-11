@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import { Users, X, Edit3, Check, UserCheck, ShieldCheck } from 'lucide-react';
 
-export default function PassengersModal({ isOpen, onClose, onlinePassengers = [], myProfile, onUpdateProfile }) {
+function PassengersModal({ isOpen, onClose, onlinePassengers = [], myProfile, onUpdateProfile }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState(myProfile?.name || '');
   const [editMood, setEditMood] = useState(myProfile?.mood || '');
@@ -25,7 +25,7 @@ export default function PassengersModal({ isOpen, onClose, onlinePassengers = []
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-fade-in">
-      <div className="saloon-glass w-full max-w-lg rounded-3xl p-5 sm:p-6 border border-white/20 shadow-2xl relative">
+      <div className="saloon-glass w-full max-w-lg rounded-3xl p-5 sm:p-6 border border-white/20 shadow-2xl relative transform-gpu">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-4">
           <div className="flex items-center gap-2.5">
@@ -188,3 +188,5 @@ export default function PassengersModal({ isOpen, onClose, onlinePassengers = []
     </div>
   );
 }
+
+export default memo(PassengersModal);

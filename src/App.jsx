@@ -161,6 +161,43 @@ export default function App() {
     };
   }, [currentTrackIndex, tracks.length]);
 
+  // 3b. Sync HTML5 Media Session API for OS Background Audio Controls (Windows/Mac/Android/iOS)
+  useEffect(() => {
+    if (typeof window === 'undefined' || !('mediaSession' in navigator)) return;
+
+    if (currentTrack) {
+      const artCover = currentTrack.cover || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=400&q=80';
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: currentTrack.title || 'Safar FM Track',
+        artist: currentTrack.artist && currentTrack.artist !== 'undefined' ? currentTrack.artist : 'Safar FM Highway Radio',
+        album: 'Safar FM • 92.7 MHz',
+        artwork: [
+          { src: artCover, sizes: '96x96', type: 'image/jpeg' },
+          { src: artCover, sizes: '128x128', type: 'image/jpeg' },
+          { src: artCover, sizes: '192x192', type: 'image/jpeg' },
+          { src: artCover, sizes: '256x256', type: 'image/jpeg' },
+          { src: artCover, sizes: '384x384', type: 'image/jpeg' },
+          { src: artCover, sizes: '512x512', type: 'image/jpeg' }
+        ]
+      });
+    }
+
+    navigator.mediaSession.playbackState = isPlaying ? 'playing' : 'paused';
+
+    const actionHandlers = [
+      ['play', () => handlePlayPause()],
+      ['pause', () => handlePlayPause()],
+      ['previoustrack', () => handlePrevTrack()],
+      ['nexttrack', () => handleNextTrack()]
+    ];
+
+    for (const [action, handler] of actionHandlers) {
+      try {
+        navigator.mediaSession.setActionHandler(action, handler);
+      } catch (e) {}
+    }
+  }, [currentTrack, isPlaying]);
+
   // 4. Play current track via YouTube Engine
   const playTrackAtIndex = (index, trackList = tracks) => {
     if (trackList.length === 0) return;

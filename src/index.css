@@ -41,6 +41,8 @@ body {
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.15);
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 .saloon-glass-pill {
@@ -49,6 +51,8 @@ body {
   -webkit-backdrop-filter: blur(16px) saturate(160%);
   border: 1px solid rgba(255, 255, 255, 0.22);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 /* Glowing Pulsing Green Dot */
@@ -68,6 +72,7 @@ body {
 
 .animate-spin-slow {
   animation: spinSlow 8s linear infinite;
+  will-change: transform;
 }
 
 .animate-spin-paused {
@@ -136,10 +141,14 @@ body {
 
 .animate-scenery-pass {
   animation: sceneryPass 12s linear infinite;
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 .animate-scenery-pass-fast {
   animation: sceneryPass 4s linear infinite;
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 /* Light Sweep (Streetlights & Headlights passing across dashboard) */
@@ -152,6 +161,8 @@ body {
 
 .animate-light-sweep {
   animation: lightSweep 3.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  will-change: transform, opacity;
+  transform: translateZ(0);
 }
 
 /* Rain droplet trickling animation */

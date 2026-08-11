@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import { Volume2, VolumeX, Radio, Sparkles, ExternalLink, Compass } from 'lucide-react';
 import { getTrackSpotifyUrl, getTrackYouTubeMusicUrl } from '../data/playlists';
 
-export default function Header({ onlineCount, onOpenPassengers, onOpenAmbient, onOpenSpotify, currentTrack }) {
+function Header({ onlineCount, onOpenPassengers, onOpenAmbient, onOpenSpotify, currentTrack }) {
   const [timeStr, setTimeStr] = useState('');
 
   useEffect(() => {
@@ -19,7 +19,7 @@ export default function Header({ onlineCount, onOpenPassengers, onOpenAmbient, o
   const ytMusicUrl = getTrackYouTubeMusicUrl(currentTrack);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-30 flex items-center justify-between px-4 sm:px-6 py-4 pointer-events-none">
+    <header className="fixed top-0 left-0 right-0 z-30 flex items-center justify-between px-4 sm:px-6 py-4 pointer-events-none transform-gpu">
       {/* Left: Live Clock & Highway Route Pill */}
       <div className="flex items-center gap-2 pointer-events-auto">
         <div className="saloon-glass-pill px-3.5 py-1.5 rounded-full flex items-center gap-2 text-xs font-semibold text-white/90 drop-shadow">
@@ -50,8 +50,6 @@ export default function Header({ onlineCount, onOpenPassengers, onOpenAmbient, o
 
       {/* Right: Ambient Sound Slider, Spotify & YT Music Links */}
       <div className="flex items-center gap-2 pointer-events-auto">
-
-
         {/* Ambient Bus Sound FX Button */}
         <button
           onClick={onOpenAmbient}
@@ -94,4 +92,6 @@ export default function Header({ onlineCount, onOpenPassengers, onOpenAmbient, o
     </header>
   );
 }
+
+export default memo(Header);
 

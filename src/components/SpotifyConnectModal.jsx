@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import { spotifyPlayer } from '../services/spotifyPlayer';
 import { ExternalLink, Key, CheckCircle, ShieldCheck, Music } from 'lucide-react';
 
-export default function SpotifyConnectModal({ isOpen, onClose, isConnected, onConnected }) {
+function SpotifyConnectModal({ isOpen, onClose, isConnected, onConnected }) {
   const [tokenInput, setTokenInput] = useState(spotifyPlayer.token || '');
   const [statusMsg, setStatusMsg] = useState('');
 
@@ -30,7 +30,7 @@ export default function SpotifyConnectModal({ isOpen, onClose, isConnected, onCo
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-fade-in">
-      <div className="relative w-full max-w-md saloon-glass rounded-3xl p-6 border border-emerald-500/30 shadow-2xl text-white">
+      <div className="relative w-full max-w-md saloon-glass rounded-3xl p-6 border border-emerald-500/30 shadow-2xl text-white transform-gpu">
         <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-4">
           <div className="flex items-center gap-2.5">
             <div className="p-2 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
@@ -116,3 +116,5 @@ export default function SpotifyConnectModal({ isOpen, onClose, isConnected, onCo
     </div>
   );
 }
+
+export default memo(SpotifyConnectModal);

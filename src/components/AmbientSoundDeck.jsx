@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import { Volume2, CloudRain, Radio, Sliders, X, Sparkles } from 'lucide-react';
 import { ambientAudio } from '../services/ambientAudio';
 
-export default function AmbientSoundDeck({ isOpen, onClose }) {
+function AmbientSoundDeck({ isOpen, onClose }) {
   const [engineVol, setEngineVol] = useState(0);
   const [rainVol, setRainVol] = useState(0);
 
@@ -20,7 +20,7 @@ export default function AmbientSoundDeck({ isOpen, onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-fade-in">
-      <div className="saloon-glass w-full max-w-md rounded-3xl p-5 sm:p-6 border border-white/20 shadow-2xl relative">
+      <div className="saloon-glass w-full max-w-md rounded-3xl p-5 sm:p-6 border border-white/20 shadow-2xl relative transform-gpu">
         <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-4">
           <div className="flex items-center gap-2.5">
             <div className="p-2 rounded-xl bg-emerald-400/20 border border-emerald-400/40 text-emerald-300">
@@ -104,3 +104,5 @@ export default function AmbientSoundDeck({ isOpen, onClose }) {
     </div>
   );
 }
+
+export default memo(AmbientSoundDeck);
