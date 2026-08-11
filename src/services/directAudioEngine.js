@@ -93,6 +93,20 @@ class DirectAudioEngine {
     }
   }
 
+  async resume() {
+    if (!this.audio) return false;
+    await this.startSilentAnchor();
+    try {
+      await this.audio.play();
+      this.isPlaying = true;
+      return true;
+    } catch (err) {
+      console.warn('[DirectAudioEngine] Resume failed:', err);
+      this.isPlaying = false;
+      return false;
+    }
+  }
+
   pause() {
     if (this.audio) {
       this.audio.pause();

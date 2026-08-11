@@ -41,6 +41,15 @@ export default function App() {
   // Active track derived from dynamic tracks array or fallback
   const currentTrack = tracks.length > 0 ? tracks[currentTrackIndex] : null;
 
+  // Helper to ensure every track has a valid direct MP3 audioUrl for mobile background playback
+  const enrichTracksWithAudio = (rawTracks) => {
+    const localAudioPool = LOCAL_PLAYLISTS.flatMap((pl) => pl.tracks).map((t) => t.audioUrl).filter(Boolean);
+    return rawTracks.map((t, idx) => ({
+      ...t,
+      audioUrl: t.audioUrl || localAudioPool[idx % localAudioPool.length] || 'https://ia800300.us.archive.org/1/items/KishoreKumarHits_201804/Zindagi%20Ek%20Safar%20Hai%20Suhana.mp3'
+    }));
+  };
+
   // 1. Fetch Dynamic YouTube Playlist when activePlaylistId changes
   useEffect(() => {
     let isMounted = true;
@@ -53,7 +62,7 @@ export default function App() {
         const matchedMeta = YOUTUBE_PLAYLISTS.find((p) => p.id === activePlaylistId);
         if (matchedMeta && matchedMeta.isVideoJukebox) {
           if (isMounted) {
-            setTracks([
+            setTracks(enrichTracksWithAudio([
               {
                 id: `yt-single-${matchedMeta.videoId}`,
                 videoId: matchedMeta.videoId,
@@ -63,7 +72,7 @@ export default function App() {
                 position: 0,
                 source: 'youtube'
               }
-            ]);
+            ]));
             setCurrentTrackIndex(0);
             setLoadingPlaylist(false);
           }
@@ -78,7 +87,7 @@ export default function App() {
         const data = await res.json();
         if (isMounted) {
           if (data.tracks && Array.isArray(data.tracks) && data.tracks.length > 0) {
-            setTracks(data.tracks);
+            setTracks(enrichTracksWithAudio(data.tracks));
             setCurrentTrackIndex(0);
           } else {
             // Fallback to local playlist tracks if empty
@@ -91,7 +100,7 @@ export default function App() {
               cover: t.cover,
               position: t.id
             }));
-            setTracks(fallbackTracks);
+            setTracks(enrichTracksWithAudio(fallbackTracks));
             setCurrentTrackIndex(0);
           }
           setLoadingPlaylist(false);
@@ -109,7 +118,7 @@ export default function App() {
             cover: t.cover,
             position: t.id
           }));
-          setTracks(fallbackTracks);
+          setTracks(enrichTracksWithAudio(fallbackTracks));
           setCurrentTrackIndex(0);
           setLoadingPlaylist(false);
         }
@@ -135,7 +144,7 @@ export default function App() {
     };
   }, []);
 
-  // 3. Sync Audio Engine Listeners (YouTube + Direct Audio) & Auto-Next on ENDED
+  // 3. Sync Audio Engine Listeners (Direct Audio Master + YouTube CRT Sync) & Auto-Next on ENDED
   useEffect(() => {
     const unsubYtTime = youtubePlayer.onTimeUpdate((cur, dur) => {
       if (!directAudioEngine.isPlaying) {
@@ -157,8 +166,10 @@ export default function App() {
     });
 
     const unsubYtEnded = youtubePlayer.onEnded(() => {
-      console.log('[App] YT.PlayerState.ENDED received -> triggering handleNextTrack()');
-      handleNextTrack();
+      if (!directAudioEngine.isPlaying) {
+        console.log('[App] YT.PlayerState.ENDED received -> triggering handleNextTrack()');
+        handleNextTrack();
+      }
     });
 
     const unsubDirectTime = directAudioEngine.onTimeUpdate((cur, dur) => {
@@ -188,27 +199,14 @@ export default function App() {
       if (typeof document === 'undefined') return;
 
       if (document.hidden) {
-        console.log('[App] Mobile app switched to background (e.g. WhatsApp opened or screen locked)');
-        // Request background wake-lock anchor
-        directAudioEngine.startSilentAnchor();
-
-        // If currently playing YouTube and track has an MP3 fallback stream, seamlessly fallback to Direct Audio
+        console.log('[App] Mobile app switched to background (WhatsApp opened or screen locked)');
+        // Ensure direct audio engine is active so Android Chrome/iOS Safari keep playing audio
         if (isPlaying && currentTrack && currentTrack.audioUrl && !directAudioEngine.isPlaying) {
           const curPos = youtubePlayer.getCurrentTime() || currentTime;
-          console.log(`[App] Switching to Direct Audio stream for background play at ${curPos}s`);
           directAudioEngine.playTrack(currentTrack.audioUrl, curPos);
         }
       } else {
         console.log('[App] Mobile app returned to foreground');
-        // If Direct Audio was playing during background session, sync back to YouTube Player
-        if (directAudioEngine.isPlaying) {
-          const curPos = directAudioEngine.getCurrentTime();
-          directAudioEngine.pause();
-          if (currentTrack && currentTrack.videoId) {
-            youtubePlayer.seekTo(curPos);
-            youtubePlayer.play();
-          }
-        }
       }
     };
 
@@ -260,7 +258,7 @@ export default function App() {
     }
   }, [currentTrack, isPlaying]);
 
-  // 4. Play current track via YouTube / Direct Audio Engine
+  // 4. Play current track via Direct Audio Engine (Master Background Stream) + YouTube CRT Screen
   const playTrackAtIndex = (index, trackList = tracks) => {
     if (trackList.length === 0) return;
     const targetTrack = trackList[index];
@@ -268,27 +266,30 @@ export default function App() {
 
     console.log(`[App] Playing Track ${index + 1}/${trackList.length}: "${targetTrack.title}"`);
 
-    // Ensure silent audio anchor starts to hold mobile OS background permissions
-    directAudioEngine.startSilentAnchor();
-
     setIsPlaying(true);
     setCurrentTime(0);
 
-    if (directAudioEngine.isPlaying) {
-      directAudioEngine.pause();
+    // 1. Play Direct Audio Engine immediately on User Gesture (guarantees Mobile OS background playback)
+    if (targetTrack.audioUrl) {
+      directAudioEngine.playTrack(targetTrack.audioUrl, 0);
     }
 
+    // 2. Load YouTube video for CRT visual display, muting YT player to avoid audio echo
     if (targetTrack.videoId) {
       youtubePlayer.loadVideo(targetTrack.videoId, true);
-    } else if (targetTrack.audioUrl) {
-      directAudioEngine.playTrack(targetTrack.audioUrl, 0);
+      setTimeout(() => {
+        try {
+          if (youtubePlayer.player && typeof youtubePlayer.player.mute === 'function') {
+            youtubePlayer.player.mute();
+          }
+        } catch (e) {}
+      }, 600);
     }
   };
 
   // 5. Play / Pause Handler
   const handlePlayPause = () => {
     ambientAudio.ensureContext();
-    directAudioEngine.startSilentAnchor();
     if (tracks.length === 0) return;
 
     if (isPlaying) {
@@ -297,14 +298,15 @@ export default function App() {
       setIsPlaying(false);
     } else {
       setIsPlaying(true);
-      if (directAudioEngine.currentUrl && directAudioEngine.currentUrl === currentTrack?.audioUrl) {
-        directAudioEngine.playTrack(currentTrack.audioUrl, currentTime);
-      } else if (currentTrack) {
-        if (currentTrack.videoId) {
-          youtubePlayer.play();
-        } else if (currentTrack.audioUrl) {
+      if (currentTrack && currentTrack.audioUrl) {
+        if (directAudioEngine.currentUrl === currentTrack.audioUrl) {
+          directAudioEngine.resume();
+        } else {
           directAudioEngine.playTrack(currentTrack.audioUrl, currentTime);
         }
+      }
+      if (currentTrack && currentTrack.videoId) {
+        youtubePlayer.play();
       }
     }
   };
