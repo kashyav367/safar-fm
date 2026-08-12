@@ -259,6 +259,80 @@ export const PLAYLISTS = [
         trivia: "Chartbuster romantic song by Arijit Singh."
       }
     ]
+  },
+  {
+    id: "local-train",
+    name: "🚂 The Local Train - Aalas Ka Pedh",
+    tagline: "Choo Lo, Aaoge Tum Kabhi, Dil Mere, Bandey & Indie Rock Anthems",
+    badge: "INDIE ROCK",
+    tracks: [
+      {
+        id: 22,
+        title: "Choo Lo",
+        artist: "The Local Train",
+        movie: "Aalas Ka Pedh (2015)",
+        year: 2015,
+        duration: "3:54",
+        youtubeId: "sFMRqxCexDk",
+        cover: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=400&q=80",
+        trivia: "Iconic Hindi indie rock ballad by The Local Train."
+      },
+      {
+        id: 23,
+        title: "Aaoge Tum Kabhi",
+        artist: "The Local Train",
+        movie: "Aalas Ka Pedh (2015)",
+        year: 2015,
+        duration: "5:14",
+        youtubeId: "nO39226YVz4",
+        cover: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=400&q=80",
+        trivia: "Soul-stirring anthem from debut album Aalas Ka Pedh."
+      },
+      {
+        id: 24,
+        title: "Dil Mere",
+        artist: "The Local Train",
+        movie: "Aalas Ka Pedh (2015)",
+        year: 2015,
+        duration: "4:32",
+        youtubeId: "qLCLvzTGFVM",
+        cover: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=400&q=80",
+        trivia: "Heartfelt acoustic & electric rock melody."
+      },
+      {
+        id: 25,
+        title: "Bandey",
+        artist: "The Local Train",
+        movie: "Aalas Ka Pedh (2015)",
+        year: 2015,
+        duration: "4:12",
+        youtubeId: "L_304S4wK5Y",
+        cover: "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=400&q=80",
+        trivia: "High-energy rock anthem by Raman Negi & band."
+      },
+      {
+        id: 26,
+        title: "Kaisey Jiyun",
+        artist: "The Local Train",
+        movie: "Aalas Ka Pedh (2015)",
+        year: 2015,
+        duration: "4:05",
+        youtubeId: "hN5-xK1-T3c",
+        cover: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=400&q=80",
+        trivia: "Emotional indie rock track featuring guitar solos."
+      },
+      {
+        id: 27,
+        title: "Dilnawaz",
+        artist: "The Local Train",
+        movie: "Vaaqif (2018)",
+        year: 2018,
+        duration: "3:48",
+        youtubeId: "c9d8Y2i_c3M",
+        cover: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80",
+        trivia: "Vaaqif album hit single loved by roadtrippers."
+      }
+    ]
   }
 ];
 
@@ -286,6 +360,14 @@ export const YOUTUBE_PLAYLISTS = [
     tagline: "Arijit Singh, Mohit Chauhan, Atif Aslam & Soulful Highway Melodies",
     category: "Arijit & Modern",
     badge: "ARIJIT SPECIAL"
+  },
+  {
+    id: "PLdAyZNISFon4H1wczSziXFpAa-iOlwc8Y",
+    name: "🚂 The Local Train - Aalas Ka Pedh",
+    hindiName: "द लोकल ट्रेन - आलस का पेड़",
+    tagline: "Choo Lo, Aaoge Tum Kabhi, Dil Mere, Bandey & Indie Rock Anthems",
+    category: "The Local Train",
+    badge: "INDIE ROCK"
   }
 ];
 

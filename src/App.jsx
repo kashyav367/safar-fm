@@ -70,6 +70,10 @@ export default function App() {
 
   // Helper to get fallback tracks matching playlist category strictly
   const getFallbackTracks = (plId) => {
+    if (plId === 'PLdAyZNISFon4H1wczSziXFpAa-iOlwc8Y' || plId === 'local-train') {
+      const localTrainPl = LOCAL_PLAYLISTS.find(p => p.id === 'local-train');
+      if (localTrainPl) return formatLocalPlaylistTracks(localTrainPl);
+    }
     if (plId === 'PLjSDelb8LaOfQ8pLA_uIF73qxuznCtCVC' || plId === 'arijit-modern') {
       const arijitPl = LOCAL_PLAYLISTS.find(p => p.id === 'arijit-modern');
       if (arijitPl) return formatLocalPlaylistTracks(arijitPl);
