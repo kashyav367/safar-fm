@@ -38,25 +38,28 @@ function SaloonPlayer({
         
         {/* Playlist & Track Selector Dropdown Modal */}
         {showPlaylists && (
-          <div className="absolute bottom-full mb-3 inset-x-0 saloon-glass rounded-2xl p-4 border border-white/20 shadow-2xl animate-fade-in z-40">
-            <div className="flex items-center justify-between mb-3 border-b border-white/10 pb-2">
+          <div className="absolute bottom-full mb-3 inset-x-0 saloon-glass rounded-2xl p-4 border border-white/20 shadow-[0_12px_48px_rgba(0,0,0,0.8)] animate-fade-in z-40">
+            <div className="flex items-center justify-between mb-3 border-b border-white/10 pb-2.5">
               <div className="flex items-center gap-2">
                 <Radio className="w-4 h-4 text-amber-400 animate-pulse" />
-                <h3 className="text-sm font-bold text-white uppercase tracking-wider">
-                  Safar FM Radio Stations & Playlists
+                <h3 className="text-xs sm:text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                  Safar FM Radio Stations
+                  <span className="bg-amber-400/20 text-amber-300 text-[10px] px-2 py-0.5 rounded-full border border-amber-400/30">
+                    {activePlaylists.length} CHANNELS AVAILABLE
+                  </span>
                 </h3>
               </div>
               <button 
                 onClick={() => setShowPlaylists(false)}
-                className="text-xs text-white/60 hover:text-white px-2 py-0.5 rounded-md hover:bg-white/10"
+                className="text-xs text-white/70 hover:text-white px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/15 border border-white/10 transition"
               >
                 Close ✕
               </button>
             </div>
 
-            {/* Station Quick Switcher Tabs */}
-            <div className="flex items-center gap-1.5 mb-3 overflow-x-auto pb-1 scrollbar-none">
-              {activePlaylists.map((pl) => {
+            {/* Station Quick Switcher Responsive Grid (Guarantees ALL 4 stations are 100% visible) */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
+              {activePlaylists.map((pl, idx) => {
                 const isSelected = activePlaylistId === pl.id;
                 return (
                   <button
@@ -64,30 +67,52 @@ function SaloonPlayer({
                     onClick={() => {
                       if (onSelectPlaylist) onSelectPlaylist(pl.id);
                     }}
-                    className={`shrink-0 text-left px-3 py-1.5 rounded-xl transition flex flex-col gap-0.5 border ${
+                    className={`text-left p-2.5 rounded-xl transition-all flex flex-col justify-between border cursor-pointer ${
                       isSelected
-                        ? 'bg-amber-400 text-black border-amber-300 font-extrabold shadow-md scale-[1.02]'
-                        : 'bg-white/5 text-white/80 border-white/10 hover:bg-white/15 hover:text-white'
+                        ? 'bg-gradient-to-br from-amber-400 to-amber-500 text-black border-amber-300 font-extrabold shadow-lg shadow-amber-500/20 scale-[1.02]'
+                        : 'bg-white/5 text-white/90 border-white/10 hover:bg-white/15 hover:border-amber-400/40 hover:text-white'
                     }`}
                   >
-                    <span className="text-xs font-bold truncate">{pl.name}</span>
-                    <span className={`text-[9px] font-mono uppercase ${isSelected ? 'text-black/80' : 'text-amber-300/90'}`}>
-                      {pl.badge || pl.tagline?.slice(0, 24)}
+                    <div className="flex items-center justify-between mb-1">
+                      <span className={`text-[9px] font-mono font-bold uppercase px-1.5 py-0.5 rounded ${
+                        isSelected ? 'bg-black/20 text-black font-extrabold' : 'bg-amber-400/10 text-amber-300 border border-amber-400/20'
+                      }`}>
+                        CH 0{idx + 1}
+                      </span>
+                      {isSelected && (
+                        <span className="relative flex h-2 w-2">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-black opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-black"></span>
+                        </span>
+                      )}
+                    </div>
+                    
+                    <p className="text-xs font-extrabold line-clamp-1 leading-tight mb-1">
+                      {pl.name}
+                    </p>
+                    
+                    <span className={`text-[9px] font-mono uppercase truncate ${
+                      isSelected ? 'text-black/80 font-bold' : 'text-white/50'
+                    }`}>
+                      {pl.badge || pl.category}
                     </span>
                   </button>
                 );
               })}
             </div>
             
-            <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
+            {/* Song Tracklist inside Active Station */}
+            <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
               {activePlaylists
                 .filter((pl) => pl.id === activePlaylistId)
                 .map((pl) => (
                   <div key={pl.id} className="space-y-1.5">
-                    <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider px-2 py-1 bg-amber-500/10 rounded-lg border border-amber-400/20">
-                      <span className="text-amber-300 font-extrabold">{pl.name}</span>
+                    <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider px-3 py-1.5 bg-amber-500/10 rounded-lg border border-amber-400/20">
+                      <span className="text-amber-300 font-extrabold flex items-center gap-1.5">
+                        <span>{pl.name}</span>
+                      </span>
                       <span className="text-[10px] text-emerald-400 font-mono font-bold">
-                        ● LIVE STATION ({pl.tracks.length} SONGS)
+                        ● {pl.tracks.length} SONGS AVAILABLE
                       </span>
                     </div>
 
@@ -102,7 +127,7 @@ function SaloonPlayer({
                             }
                             setShowPlaylists(false);
                           }}
-                          className={`w-full text-left px-3 py-2 rounded-xl transition flex items-center justify-between border ${
+                          className={`w-full text-left px-3 py-2 rounded-xl transition flex items-center justify-between border cursor-pointer ${
                             isCurrent
                               ? 'bg-amber-500/30 border-amber-400 text-white font-semibold shadow-md'
                               : 'bg-white/5 border-transparent text-white/80 hover:bg-white/10 hover:text-white'
@@ -132,6 +157,21 @@ function SaloonPlayer({
             </div>
           </div>
         )}
+
+        {/* Floating Quick Channel Switcher Bar Button */}
+        <div className="flex justify-center mb-1.5">
+          <button
+            onClick={() => setShowPlaylists(!showPlaylists)}
+            className="saloon-glass-pill hover:bg-amber-400/20 text-amber-300 border border-amber-400/40 px-3.5 py-1 rounded-full text-xs font-bold flex items-center gap-2 shadow-lg transition active:scale-95 cursor-pointer"
+            title="Open Safar FM All 4 Radio Channels & Song List"
+          >
+            <Radio className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
+            <span>Radio Stations ({activePlaylists.length} Playlists)</span>
+            <span className="bg-amber-400 text-black text-[10px] px-1.5 py-0.2 rounded-full font-extrabold">
+              {showPlaylists ? '▼ Close' : '▲ Switch'}
+            </span>
+          </button>
+        </div>
 
         {/* Player Bar Frame */}
         <div className="group relative flex items-center gap-3 sm:gap-4 rounded-full p-2.5 sm:p-3 pr-4 sm:pr-5 saloon-glass border border-white/20 shadow-[0_8px_40px_rgba(0,0,0,0.65)] backdrop-blur-2xl transform-gpu">
@@ -170,10 +210,10 @@ function SaloonPlayer({
               {/* Radio Dial Channel Tag */}
               <button
                 onClick={() => setShowPlaylists(!showPlaylists)}
-                className="hidden sm:inline-flex items-center gap-1 text-[10px] font-mono text-amber-300 bg-amber-400/10 px-2 py-0.5 rounded-full border border-amber-400/30 hover:bg-amber-400/20"
+                className="hidden sm:inline-flex items-center gap-1 text-[10px] font-mono text-amber-300 bg-amber-400/10 px-2 py-0.5 rounded-full border border-amber-400/30 hover:bg-amber-400/20 cursor-pointer"
               >
                 <Radio className="w-3 h-3 text-amber-400" />
-                92.7 MHz
+                92.7 MHz • CHANNELS
               </button>
             </div>
 
